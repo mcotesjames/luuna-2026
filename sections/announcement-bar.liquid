@@ -51,10 +51,31 @@
         --announcement-bar-font-size: {{ section.settings.desktop_font_size | divided_by: 16.0 }}rem;
       }
     }
+
+    {%- if target_discount_code != blank -%}
+      /* Messages stay invisible until the script below has checked the cart, so only the correct one is ever seen */
+      #shopify-section-{{ section.id }} .announcement-bar > * {
+        transition: opacity 0.3s ease;
+      }
+
+      #shopify-section-{{ section.id }} .announcement-bar[data-discount-pending] > * {
+        opacity: 0;
+      }
+    {%- endif -%}
   </style>
 
+  {%- if target_discount_code != blank -%}
+    <noscript>
+      <style>
+        #shopify-section-{{ section.id }} .announcement-bar[data-discount-pending] > * {
+          opacity: 1;
+        }
+      </style>
+    </noscript>
+  {%- endif -%}
+
   <height-observer variable="announcement-bar">
-    <div class="announcement-bar color-scheme color-scheme--{{ section.settings.color_scheme.id }}" {% if default_blocks_count == 0 %}hidden{% endif %}>
+    <div class="announcement-bar color-scheme color-scheme--{{ section.settings.color_scheme.id }}" {% if default_blocks_count == 0 %}hidden{% endif %} {% if target_discount_code != blank %}data-discount-pending{% endif %}>
       {%- assign carousel_id = 'carousel-' | append: section.id -%}
 
       {%- if content_blocks_count > 1 -%}
@@ -125,7 +146,6 @@
       (() => {
         const sectionId = 'shopify-section-{{ section.id }}';
         const discountCode = {{ target_discount_code | json }};
-        const storageKey = `announcement-bar-discount:${discountCode}`;
 
         const applyState = (isApplied) => {
           const section = document.getElementById(sectionId);
@@ -168,26 +188,18 @@
         const syncWithCart = async (cart) => {
           try {
             cart ??= await fetch(`${window.Shopify?.routes?.root ?? '/'}cart.js`).then((response) => response.json());
+            applyState((cart.discount_codes || []).some((discount) => discount.applicable && discount.code.toUpperCase() === discountCode));
           } catch (error) {
-            return;
+            // If the cart can't be read, fall back to showing the default messages
           }
 
-          const isApplied = (cart.discount_codes || []).some((discount) => discount.applicable && discount.code.toUpperCase() === discountCode);
-
-          try {
-            sessionStorage.setItem(storageKey, String(isApplied));
-          } catch (error) {}
-
-          applyState(isApplied);
+          reveal();
         };
 
-        // Apply the last known state straight away to avoid a flash of the wrong message, then confirm with the cart.
-        try {
-          if (sessionStorage.getItem(storageKey) === 'true') {
-            applyState(true);
-          }
-        } catch (error) {}
+        const reveal = () => document.getElementById(sectionId)?.querySelector('.announcement-bar')?.removeAttribute('data-discount-pending');
 
+        // Never leave the bar blank if the cart request hangs
+        setTimeout(reveal, 3000);
         syncWithCart();
 
         if (!window.announcementBarDiscountListeners) {
