@@ -1,4 +1,31 @@
-{%- if section.blocks.size > 0 -%}
+{%- liquid
+  assign discount_code_active = false
+  assign target_discount_code = section.settings.discount_code | strip | upcase
+
+  if target_discount_code != blank
+    for discount_code in cart.discount_codes
+      assign applied_code = discount_code.code | upcase
+      if applied_code == target_discount_code and discount_code.applicable
+        assign discount_code_active = true
+        break
+      endif
+    endfor
+  endif
+
+  assign visible_blocks_count = 0
+  for block in section.blocks
+    assign block_text = block.settings.text
+    if discount_code_active and block.settings.applied_text != blank
+      assign block_text = block.settings.applied_text
+    endif
+
+    if block_text != blank
+      assign visible_blocks_count = visible_blocks_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if visible_blocks_count > 0 -%}
   <style>
     :root {
       --announcement-bar-is-sticky: {% if section.settings.enable_sticky %}1{% else %}0{% endif %};
@@ -36,7 +63,7 @@
     <div class="announcement-bar color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
       {%- assign carousel_id = 'carousel-' | append: section.id -%}
 
-      {%- if section.blocks.size > 1 -%}
+      {%- if visible_blocks_count > 1 -%}
         <carousel-prev-button aria-controls="{{ carousel_id }}" class="contents">
           <button type="button" class="tap-area">
             <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
@@ -53,12 +80,26 @@
         id="{{ carousel_id }}"
         class="announcement-bar__carousel"
       >
+        {%- assign is_first_visible_block = true -%}
+
         {%- for block in section.blocks -%}
-          <p class="prose heading {% if forloop.first %}is-selected{% endif %}" {{ block.shopify_attributes }}>{{- block.settings.text -}}</p>
+          {%- liquid
+            assign block_text = block.settings.text
+            if discount_code_active and block.settings.applied_text != blank
+              assign block_text = block.settings.applied_text
+            endif
+
+            if block_text == blank
+              continue
+            endif
+          -%}
+
+          <p class="prose heading {% if is_first_visible_block %}is-selected{% endif %}" {{ block.shopify_attributes }}>{{- block_text -}}</p>
+          {%- assign is_first_visible_block = false -%}
         {%- endfor -%}
       </announcement-bar-carousel>
 
-      {%- if section.blocks.size > 1 -%}
+      {%- if visible_blocks_count > 1 -%}
         <carousel-next-button aria-controls="{{ carousel_id }}" class="contents">
           <button type="button" class="tap-area">
             <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
@@ -93,7 +134,14 @@
           "type": "inline_richtext",
           "id": "text",
           "label": "t:sections.announcement_bar.blocks.message.text",
+          "info": "t:sections.announcement_bar.blocks.message.text_info",
           "default": "Announce something here"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "applied_text",
+          "label": "t:sections.announcement_bar.blocks.message.applied_text",
+          "info": "t:sections.announcement_bar.blocks.message.applied_text_info"
         }
       ]
     }
@@ -144,6 +192,17 @@
       "unit": "px",
       "label": "t:sections.announcement_bar.mobile_text_size",
       "default": 10
+    },
+    {
+      "type": "header",
+      "content": "t:sections.announcement_bar.discount_code_header"
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "t:sections.announcement_bar.discount_code",
+      "info": "t:sections.announcement_bar.discount_code_info",
+      "default": "FREESHIPPING"
     }
   ],
   "presets": [

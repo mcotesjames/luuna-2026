@@ -532,10 +532,16 @@
       "cycle_speed": "Change messages every",
       "mobile_text_size": "Mobile text size",
       "desktop_text_size": "Desktop text size",
+      "discount_code_header": "Discount code messaging",
+      "discount_code": "Discount code",
+      "discount_code_info": "Messages switch to their \"applied\" text while this code is applied to the customer's cart. Share it with the link /discount/CODE.",
       "blocks": {
         "message": {
           "name": "Message",
-          "text": "Text"
+          "text": "Text",
+          "text_info": "Shown when the discount code is not applied. Leave blank to only show this message once the code is applied.",
+          "applied_text": "Text when discount code is applied",
+          "applied_text_info": "Replaces the text above while the discount code set in the section settings is applied. Leave blank to keep showing the text above."
         }
       }
     },

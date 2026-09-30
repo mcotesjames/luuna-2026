@@ -1,1 +1,107 @@
-{"type":"header","name":"Header group","sections":{"countdown-timer":{"type":"countdown-condensed","disabled":true,"settings":{"color_scheme":"schema-3","content":"Free delivery (Hong kong only) & gift with purchase over HK$500","link_text":"shop now","link_url":"shopify:\/\/collections\/period-care-edit","expiration_date":"","expiration_behavior":"leave","desktop_justification":"space-between"}},"announcement_bar_8FH39e":{"type":"announcement-bar","blocks":{"message_AzFQgf":{"type":"message","settings":{"text":"Free Hong Kong delivery over HK$400"}}},"block_order":["message_AzFQgf"],"name":"t:sections.announcement_bar.name","settings":{"color_scheme":"scheme-cba999a8-6792-4baf-9daf-1ca099375a04","enable_sticky":true,"autoplay":true,"cycle_speed":5,"desktop_font_size":11,"mobile_font_size":10}},"header":{"type":"header","blocks":{"mega_menu_XPWKTD":{"type":"mega_menu","settings":{"menu_item":"","images_position":"right","image_1_heading":"","image_1_text":"","image_1_link":"","image_2_heading":"","image_2_text":"","image_2_link":""}}},"block_order":["mega_menu_XPWKTD"],"settings":{"color_scheme":"scheme-1","enable_sticky":true,"hide_on_scroll":false,"show_separation_border":true,"reduce_padding":false,"logo":"shopify:\/\/shop_images\/Luuna_logo_1.png","logo_max_width":130,"logo_mobile_max_width":80,"menu":"main-menu","sidebar_menu":"","customer_account_menu":"customer-account-main-menu","menu_open_trigger":"hover","menu_text_font":"heading","enable_search":true,"sidebar_color_scheme":"scheme-1","sidebar_text_font":"heading","sidebar_show_dividers":false,"sidebar_open_second_level_menus":false,"layout":"logo_center_navigation_inline","show_icons":true,"show_country_selector":false,"show_country_name":false,"show_country_flag":true,"show_locale_selector":false,"transparent_header_text_color":"#ffffff","transparent_logo":"shopify:\/\/shop_images\/Untitled_design_13_d6ac08cc-cdbe-446a-93e1-4e71f15117d7.png"}}},"order":["countdown-timer","announcement_bar_8FH39e","header"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "countdown-timer": {
+      "type": "countdown-condensed",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "schema-3",
+        "content": "Free delivery (Hong kong only) & gift with purchase over HK$500",
+        "link_text": "shop now",
+        "link_url": "shopify://collections/period-care-edit",
+        "expiration_date": "",
+        "expiration_behavior": "leave",
+        "desktop_justification": "space-between"
+      }
+    },
+    "announcement_bar_8FH39e": {
+      "type": "announcement-bar",
+      "blocks": {
+        "message_AzFQgf": {
+          "type": "message",
+          "settings": {
+            "text": "Want this delivery on us? Use FREESHIPPING at checkout",
+            "applied_text": "FREESHIPPING applied. Free delivery will show at checkout"
+          }
+        }
+      },
+      "block_order": [
+        "message_AzFQgf"
+      ],
+      "name": "t:sections.announcement_bar.name",
+      "settings": {
+        "color_scheme": "scheme-cba999a8-6792-4baf-9daf-1ca099375a04",
+        "enable_sticky": true,
+        "autoplay": true,
+        "cycle_speed": 5,
+        "desktop_font_size": 11,
+        "mobile_font_size": 10,
+        "discount_code": "FREESHIPPING"
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "mega_menu_XPWKTD": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "",
+            "images_position": "right",
+            "image_1_heading": "",
+            "image_1_text": "",
+            "image_1_link": "",
+            "image_2_heading": "",
+            "image_2_text": "",
+            "image_2_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_XPWKTD"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "enable_sticky": true,
+        "hide_on_scroll": false,
+        "show_separation_border": true,
+        "reduce_padding": false,
+        "logo": "shopify://shop_images/Luuna_logo_1.png",
+        "logo_max_width": 130,
+        "logo_mobile_max_width": 80,
+        "menu": "main-menu",
+        "sidebar_menu": "",
+        "customer_account_menu": "customer-account-main-menu",
+        "menu_open_trigger": "hover",
+        "menu_text_font": "heading",
+        "enable_search": true,
+        "sidebar_color_scheme": "scheme-1",
+        "sidebar_text_font": "heading",
+        "sidebar_show_dividers": false,
+        "sidebar_open_second_level_menus": false,
+        "layout": "logo_center_navigation_inline",
+        "show_icons": true,
+        "show_country_selector": false,
+        "show_country_name": false,
+        "show_country_flag": true,
+        "show_locale_selector": false,
+        "transparent_header_text_color": "#ffffff",
+        "transparent_logo": "shopify://shop_images/Untitled_design_13_d6ac08cc-cdbe-446a-93e1-4e71f15117d7.png"
+      }
+    }
+  },
+  "order": [
+    "countdown-timer",
+    "announcement_bar_8FH39e",
+    "header"
+  ]
+}
