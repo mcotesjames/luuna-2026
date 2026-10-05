@@ -1,0 +1,71 @@
+{%- doc -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  DISCOUNT CODE MESSAGE
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Renders a notification that switches between two messages depending on whether a discount code is applied to the
+  cart. The check happens in the browser (see discount-code-message.js), as Liquid can't see applied discount codes.
+
+  @param {string} discount_code - The discount code to look for (case insensitive)
+  @param {string} text - Message shown when the code is not applied (leave blank to only show the applied message)
+  @param {string} applied_text - Message shown when the code is applied (leave blank to keep showing the text)
+  @param {string} [class] - Optional extra classes
+{%- enddoc -%}
+
+{%- liquid
+  assign target_discount_code = discount_code | strip | upcase
+
+  assign has_applied_text = false
+  if applied_text != blank and target_discount_code != blank
+    assign has_applied_text = true
+  endif
+-%}
+
+{%- if text != blank or has_applied_text -%}
+  <style>
+    discount-code-message {
+      display: block;
+      padding: .625rem 1rem;
+      text-align: center;
+      font-size: var(--text-sm);
+      background: rgb(var(--text-color) / .06);
+      color: rgb(var(--text-color));
+      transition: opacity .3s ease, background-color .3s ease, color .3s ease;
+    }
+
+    discount-code-message[applied] {
+      background: rgb(var(--success-background));
+      color: rgb(var(--success-text));
+    }
+
+    discount-code-message[pending] {
+      opacity: 0;
+    }
+  </style>
+
+  <noscript>
+    <style>
+      discount-code-message[pending] {
+        opacity: 1;
+      }
+    </style>
+  </noscript>
+
+  <script type="module" src="{{ 'discount-code-message.js' | asset_url }}"></script>
+
+  <discount-code-message
+    class="{{ class }}"
+    discount-code="{{ target_discount_code | escape }}"
+    {% if target_discount_code != blank %}pending{% endif %}
+    {% if text == blank %}hidden{% endif %}
+    role="status"
+  >
+    {%- if text != blank -%}
+      <p data-discount-state="default">{{ text }}</p>
+    {%- endif -%}
+
+    {%- if has_applied_text -%}
+      <p data-discount-state="applied" hidden>{{ applied_text }}</p>
+    {%- endif -%}
+  </discount-code-message>
+{%- endif -%}

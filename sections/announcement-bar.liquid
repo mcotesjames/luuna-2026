@@ -1,4 +1,25 @@
-{%- if section.blocks.size > 0 -%}
+{%- comment -%}
+  Messages can switch to alternate "applied" text when a discount code is on the cart. Liquid does not expose
+  discount codes on the cart object (and shipping discounts never appear in cart.discount_applications), so both
+  versions are rendered and the script below picks one based on /cart.js, updating again on cart changes.
+{%- endcomment -%}
+
+{%- liquid
+  assign target_discount_code = section.settings.discount_code | strip | upcase
+
+  assign content_blocks_count = 0
+  assign default_blocks_count = 0
+  for block in section.blocks
+    if block.settings.text != blank
+      assign content_blocks_count = content_blocks_count | plus: 1
+      assign default_blocks_count = default_blocks_count | plus: 1
+    elsif block.settings.applied_text != blank and target_discount_code != blank
+      assign content_blocks_count = content_blocks_count | plus: 1
+    endif
+  endfor
+-%}
+
+{%- if content_blocks_count > 0 -%}
   <style>
     :root {
       --announcement-bar-is-sticky: {% if section.settings.enable_sticky %}1{% else %}0{% endif %};
@@ -30,14 +51,35 @@
         --announcement-bar-font-size: {{ section.settings.desktop_font_size | divided_by: 16.0 }}rem;
       }
     }
+
+    {%- if target_discount_code != blank -%}
+      /* Messages stay invisible until the script below has checked the cart, so only the correct one is ever seen */
+      #shopify-section-{{ section.id }} .announcement-bar > * {
+        transition: opacity 0.3s ease;
+      }
+
+      #shopify-section-{{ section.id }} .announcement-bar[data-discount-pending] > * {
+        opacity: 0;
+      }
+    {%- endif -%}
   </style>
 
+  {%- if target_discount_code != blank -%}
+    <noscript>
+      <style>
+        #shopify-section-{{ section.id }} .announcement-bar[data-discount-pending] > * {
+          opacity: 1;
+        }
+      </style>
+    </noscript>
+  {%- endif -%}
+
   <height-observer variable="announcement-bar">
-    <div class="announcement-bar color-scheme color-scheme--{{ section.settings.color_scheme.id }}">
+    <div class="announcement-bar color-scheme color-scheme--{{ section.settings.color_scheme.id }}" {% if default_blocks_count == 0 %}hidden{% endif %} {% if target_discount_code != blank %}data-discount-pending{% endif %}>
       {%- assign carousel_id = 'carousel-' | append: section.id -%}
 
-      {%- if section.blocks.size > 1 -%}
-        <carousel-prev-button aria-controls="{{ carousel_id }}" class="contents">
+      {%- if content_blocks_count > 1 -%}
+        <carousel-prev-button aria-controls="{{ carousel_id }}" class="contents" data-announcement-nav {% if default_blocks_count <= 1 %}hidden{% endif %}>
           <button type="button" class="tap-area">
             <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
             {%- render 'icon' with 'arrow-left', width: 12, direction_aware: true -%}
@@ -53,13 +95,43 @@
         id="{{ carousel_id }}"
         class="announcement-bar__carousel"
       >
+        {%- assign is_first_visible_block = true -%}
+
         {%- for block in section.blocks -%}
-          <p class="prose heading {% if forloop.first %}is-selected{% endif %}" {{ block.shopify_attributes }}>{{- block.settings.text -}}</p>
+          {%- liquid
+            assign has_default_text = false
+            if block.settings.text != blank
+              assign has_default_text = true
+            endif
+
+            assign has_applied_text = false
+            if block.settings.applied_text != blank and target_discount_code != blank
+              assign has_applied_text = true
+            endif
+
+            unless has_default_text or has_applied_text
+              continue
+            endunless
+          -%}
+
+          <p
+            class="prose heading {% if has_default_text and is_first_visible_block %}is-selected{% endif %}"
+            {% if has_default_text %}data-has-default{% else %}hidden{% endif %}
+            {% if has_applied_text %}data-has-applied{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            {%- if has_default_text -%}<span data-announcement-text="default">{{- block.settings.text -}}</span>{%- endif -%}
+            {%- if has_applied_text -%}<span data-announcement-text="applied" hidden>{{- block.settings.applied_text -}}</span>{%- endif -%}
+          </p>
+
+          {%- if has_default_text -%}
+            {%- assign is_first_visible_block = false -%}
+          {%- endif -%}
         {%- endfor -%}
       </announcement-bar-carousel>
 
-      {%- if section.blocks.size > 1 -%}
-        <carousel-next-button aria-controls="{{ carousel_id }}" class="contents">
+      {%- if content_blocks_count > 1 -%}
+        <carousel-next-button aria-controls="{{ carousel_id }}" class="contents" data-announcement-nav {% if default_blocks_count <= 1 %}hidden{% endif %}>
           <button type="button" class="tap-area">
             <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
             {%- render 'icon' with 'arrow-right', width: 12, direction_aware: true -%}
@@ -68,6 +140,77 @@
       {%- endif -%}
     </div>
   </height-observer>
+
+  {%- if target_discount_code != blank -%}
+    <script>
+      (() => {
+        const sectionId = 'shopify-section-{{ section.id }}';
+        const discountCode = {{ target_discount_code | json }};
+
+        const applyState = (isApplied) => {
+          const section = document.getElementById(sectionId);
+          const carousel = section?.querySelector('announcement-bar-carousel');
+
+          if (!carousel || section.dataset.discountApplied === String(isApplied)) {
+            return;
+          }
+
+          section.dataset.discountApplied = String(isApplied);
+
+          const slides = Array.from(carousel.children);
+          const currentSlide = slides.find((slide) => slide.classList.contains('is-selected'));
+
+          slides.forEach((slide) => {
+            const showApplied = isApplied && slide.hasAttribute('data-has-applied');
+            slide.querySelector('[data-announcement-text="default"]')?.toggleAttribute('hidden', showApplied);
+            slide.querySelector('[data-announcement-text="applied"]')?.toggleAttribute('hidden', !showApplied);
+            slide.toggleAttribute('hidden', !showApplied && !slide.hasAttribute('data-has-default'));
+          });
+
+          const visibleSlides = slides.filter((slide) => !slide.hasAttribute('hidden'));
+          const nextSlide = currentSlide && !currentSlide.hasAttribute('hidden') ? currentSlide : visibleSlides[0];
+
+          if (nextSlide !== currentSlide) {
+            slides.forEach((slide) => {
+              slide.classList.remove('is-selected');
+              ['opacity', 'visibility', 'transform'].forEach((property) => slide.style.removeProperty(property));
+            });
+            nextSlide?.classList.add('is-selected');
+          }
+
+          // Re-sync the carousel's internal index with the selected slide once it has been upgraded.
+          customElements.whenDefined('announcement-bar-carousel').then(() => carousel.connectedCallback());
+
+          section.querySelectorAll('[data-announcement-nav]').forEach((nav) => nav.toggleAttribute('hidden', visibleSlides.length <= 1));
+          section.querySelector('.announcement-bar').toggleAttribute('hidden', visibleSlides.length === 0);
+        };
+
+        const syncWithCart = async (cart) => {
+          try {
+            cart ??= await fetch(`${window.Shopify?.routes?.root ?? '/'}cart.js`).then((response) => response.json());
+            applyState((cart.discount_codes || []).some((discount) => discount.applicable && discount.code.toUpperCase() === discountCode));
+          } catch (error) {
+            // If the cart can't be read, fall back to showing the default messages
+          }
+
+          reveal();
+        };
+
+        const reveal = () => document.getElementById(sectionId)?.querySelector('.announcement-bar')?.removeAttribute('data-discount-pending');
+
+        // Never leave the bar blank if the cart request hangs
+        setTimeout(reveal, 3000);
+        syncWithCart();
+
+        if (!window.announcementBarDiscountListeners) {
+          window.announcementBarDiscountListeners = true;
+          document.addEventListener('cart:change', (event) => syncWithCart(event.detail?.cart?.discount_codes ? event.detail.cart : undefined));
+          document.addEventListener('cart:refresh', () => syncWithCart());
+          window.addEventListener('pageshow', (event) => event.persisted && syncWithCart());
+        }
+      })();
+    </script>
+  {%- endif -%}
 
   <script>
     document.documentElement.style.setProperty('--announcement-bar-height', `${document.getElementById('shopify-section-{{ section.id }}').clientHeight.toFixed(2)}px`);
@@ -93,7 +236,14 @@
           "type": "inline_richtext",
           "id": "text",
           "label": "t:sections.announcement_bar.blocks.message.text",
+          "info": "t:sections.announcement_bar.blocks.message.text_info",
           "default": "Announce something here"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "applied_text",
+          "label": "t:sections.announcement_bar.blocks.message.applied_text",
+          "info": "t:sections.announcement_bar.blocks.message.applied_text_info"
         }
       ]
     }
@@ -144,6 +294,17 @@
       "unit": "px",
       "label": "t:sections.announcement_bar.mobile_text_size",
       "default": 10
+    },
+    {
+      "type": "header",
+      "content": "t:sections.announcement_bar.discount_code_header"
+    },
+    {
+      "type": "text",
+      "id": "discount_code",
+      "label": "t:sections.announcement_bar.discount_code",
+      "info": "t:sections.announcement_bar.discount_code_info",
+      "default": "FREESHIPPING"
     }
   ],
   "presets": [

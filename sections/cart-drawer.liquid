@@ -108,6 +108,13 @@
           </div>
         {%- endif -%}
 
+        {%- render 'discount-code-message',
+          discount_code: section.settings.discount_message_code,
+          text: section.settings.discount_message_text,
+          applied_text: section.settings.discount_message_applied_text,
+          class: 'w-full'
+        -%}
+
         {%- if section.settings.allow_discount_application -%}
           {%- render 'cart-discount' -%}
         {%- endif -%}
@@ -209,6 +216,31 @@
       "id": "show_price_in_checkout_button",
       "label": "t:sections.cart_drawer.show_price_in_checkout_button",
       "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.cart_drawer.discount_message_category"
+    },
+    {
+      "type": "text",
+      "id": "discount_message_code",
+      "label": "t:sections.cart_drawer.discount_message_code",
+      "info": "t:sections.cart_drawer.discount_message_code_info",
+      "default": "FREESHIPPING"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "discount_message_text",
+      "label": "t:sections.cart_drawer.discount_message_text",
+      "info": "t:sections.cart_drawer.discount_message_text_info",
+      "default": "Want this delivery on us? Use FREESHIPPING at checkout"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "discount_message_applied_text",
+      "label": "t:sections.cart_drawer.discount_message_applied_text",
+      "info": "t:sections.cart_drawer.discount_message_applied_text_info",
+      "default": "FREESHIPPING applied. Free delivery will show at checkout"
     },
     {
       "type": "header",

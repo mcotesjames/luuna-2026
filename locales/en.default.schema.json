@@ -532,10 +532,16 @@
       "cycle_speed": "Change messages every",
       "mobile_text_size": "Mobile text size",
       "desktop_text_size": "Desktop text size",
+      "discount_code_header": "Discount code messaging",
+      "discount_code": "Discount code",
+      "discount_code_info": "Messages switch to their \"applied\" text while this code is applied to the customer's cart. Share it with the link /discount/CODE.",
       "blocks": {
         "message": {
           "name": "Message",
-          "text": "Text"
+          "text": "Text",
+          "text_info": "Shown when the discount code is not applied. Leave blank to only show this message once the code is applied.",
+          "applied_text": "Text when discount code is applied",
+          "applied_text_info": "Replaces the text above while the discount code set in the section settings is applied. Leave blank to keep showing the text above."
         }
       }
     },
@@ -612,6 +618,13 @@
       "show_view_cart_button": "Show view cart button",
       "show_checkout_button": "Show checkout button",
       "show_price_in_checkout_button": "Show price in checkout button",
+      "discount_message_category": "Discount code message",
+      "discount_message_code": "Discount code",
+      "discount_message_code_info": "Shown above the discount code field. The message switches to its \"applied\" text while this code is applied to the cart.",
+      "discount_message_text": "Text",
+      "discount_message_text_info": "Shown when the discount code is not applied. Leave blank to only show a message once the code is applied.",
+      "discount_message_applied_text": "Text when discount code is applied",
+      "discount_message_applied_text_info": "Replaces the text above while the discount code is applied. Leave blank to keep showing the text above.",
       "cross_sell_category": "Cross-sell",
       "cross_sell_products": "Products",
       "cross_sell_products_info": "Products already in the cart or that are sold out are hidden.",
@@ -1066,7 +1079,14 @@
       "show_shipping_text": "Show shipping/taxes text",
       "show_accelerated_buttons": "Show accelerated buttons",
       "show_accelerated_buttons_info": "Configure accelerated payment buttons in your [payment settings](https://www.shopify.com/admin/settings/payments).",
-      "show_shipping_estimator": "Show shipping estimator"
+      "show_shipping_estimator": "Show shipping estimator",
+      "discount_message_category": "Discount code message",
+      "discount_message_code": "Discount code",
+      "discount_message_code_info": "Shown above the discount code field. The message switches to its \"applied\" text while this code is applied to the cart.",
+      "discount_message_text": "Text",
+      "discount_message_text_info": "Shown when the discount code is not applied. Leave blank to only show a message once the code is applied.",
+      "discount_message_applied_text": "Text when discount code is applied",
+      "discount_message_applied_text_info": "Replaces the text above while the discount code is applied. Leave blank to keep showing the text above."
     },
     "main_collection": {
       "name": "Collection page",
