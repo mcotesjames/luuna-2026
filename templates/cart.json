@@ -21,7 +21,7 @@
         "show_shipping_estimator": true,
         "discount_message_code": "FREESHIPPING2026",
         "discount_message_text": "Want this delivery on us? Use FREESHIPPING at checkout",
-        "discount_message_applied_text": "FREESHIPPING applied. Free delivery will show at checkout"
+        "discount_message_applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
       }
     }
   },
