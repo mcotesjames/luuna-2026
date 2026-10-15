@@ -464,6 +464,13 @@
               </div>
             {%- endif -%}
 
+          {%- when 'promotion' -%}
+            {%- render 'discount-code-message',
+              discount_code: block.settings.discount_code,
+              text: block.settings.text,
+              applied_text: block.settings.applied_text
+            -%}
+
           {%- when 'accordion' -%}
             {%- liquid
               assign accordion_title = block.settings.title | default: block.settings.page.title

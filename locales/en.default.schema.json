@@ -1425,6 +1425,15 @@
         "text": {
           "name": "Text"
         },
+        "promotion": {
+          "name": "Promotion",
+          "discount_code": "Discount code",
+          "discount_code_info": "The message switches to its \"applied\" text while this code is applied to the cart.",
+          "text": "Text",
+          "text_info": "Shown when the discount code is not applied. Leave blank to only show a message once the code is applied.",
+          "applied_text": "Text when discount code is applied",
+          "applied_text_info": "Replaces the text above while the discount code is applied. Leave blank to keep showing the text above."
+        },
         "collapsible_text": {
           "name": "Collapsible text",
           "show_below_gallery": "Show below gallery on desktop",
