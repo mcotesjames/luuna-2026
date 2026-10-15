@@ -1,26 +1,117 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "lead-form": {
       "type": "lead-form",
+      "blocks": {
+        "benefit-1": {
+          "type": "benefit",
+          "settings": {
+            "text": "Free delivery on your next order"
+          }
+        },
+        "benefit-2": {
+          "type": "benefit",
+          "settings": {
+            "text": "Delivered across Hong Kong in 2–3 days"
+          }
+        },
+        "benefit-3": {
+          "type": "benefit",
+          "settings": {
+            "text": "Every order helps tackle period poverty"
+          }
+        }
+      },
+      "block_order": [
+        "benefit-1",
+        "benefit-2",
+        "benefit-3"
+      ],
       "settings": {
         "color_scheme": "scheme-1",
         "separate_section_with_border": false,
-        "campaign_tag": "",
-        "redirect_url": "",
-        "subheading": "",
-        "title": "Get in touch",
+        "image": "shopify://shop_images/freeshipping-reminder.jpg",
+        "desktop_height": 680,
+        "logo_width": 130,
+        "subheading": "Limited-time offer",
+        "title": "Your next delivery's on us",
         "heading_style": "h1",
-        "content": "<p>Tell visitors what they'll get by signing up.</p>",
+        "content": "<p>Sign up and we'll send you a code for free delivery across Hong Kong on your next order. Trusted, organic period and self-care, delivered in 2–3 days.</p>",
+        "icon_color": "#231915",
+        "klaviyo_form_id": "XVtJxz",
+        "form_min_height": 120,
+        "testimonial_quote": "",
+        "testimonial_author": "",
+        "testimonial_role": ""
+      }
+    },
+    "benefits": {
+      "type": "benefits-list",
+      "blocks": {
+        "vetted": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-shield",
+            "title": "Vetted with care",
+            "content": "<p>Every product is tested and approved by our women-led team before it makes the cut.</p>"
+          }
+        },
+        "ingredients": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-leaf",
+            "title": "Honest ingredients",
+            "content": "<p>Organic, natural materials from brands that are open about what's inside. No buzzwords.</p>"
+          }
+        },
+        "delivery": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-delivery-truck",
+            "title": "Delivered across Hong Kong",
+            "content": "<p>Dispatched within 2 days and with you in 2–3 business days.</p>"
+          }
+        },
+        "impact": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-love",
+            "title": "Every order gives back",
+            "content": "<p>Each purchase helps tackle period poverty in local communities.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "vetted",
+        "ingredients",
+        "delivery",
+        "impact"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "image": "shopify://shop_images/03_1.jpg",
         "image_position": "end",
-        "show_name": true,
-        "require_name": false,
-        "button_text": "Sign up",
-        "success_message": "Thanks for signing up! We'll be in touch soon.",
-        "disclaimer": "<p>By signing up, you agree to receive marketing emails from us. You can unsubscribe at any time.</p>"
+        "image_aspect_ratio": "1 / 1",
+        "subheading": "",
+        "title": "Why shop with LUUNA",
+        "heading_style": "h2",
+        "content": "",
+        "marker_style": "number"
       }
     },
     "main": {
       "type": "main-page",
+      "disabled": true,
       "settings": {
         "color_scheme": "",
         "show_title": false,
@@ -28,5 +119,9 @@
       }
     }
   },
-  "order": ["lead-form", "main"]
+  "order": [
+    "lead-form",
+    "benefits",
+    "main"
+  ]
 }

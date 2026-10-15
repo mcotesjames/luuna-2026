@@ -2,150 +2,260 @@
   ------------------------------------------------------------------------------------------------------------------------
   LEAD FORM
 
-  Lead capture form for campaign landing pages. Submissions use Shopify's customer form, so each lead is created (or
-  updated) as a customer subscribed to email marketing, and tagged with the campaign tag so it can be segmented in the
-  admin (Customers > Segments, filter by tag). Custom field blocks are saved to the customer's note.
+  Lead capture hero for campaign landing pages. The form itself is a Klaviyo embedded form: this section outputs the
+  container Klaviyo looks for (<div class="klaviyo-form-ID">), and the Klaviyo onsite app embed renders the form into
+  it. The form ID comes from the section setting, falling back to the page's custom.klaviyo_form_id metafield so one
+  template can serve several campaign pages.
+
+  On desktop the image fills the section behind the content. On mobile it stacks below the content so the text stays
+  readable over any image.
   ------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
 <style>
+  #shopify-section-{{ section.id }} {
+    --lead-form-icon-color: {% if section.settings.icon_color != blank and section.settings.icon_color != 'rgba(0,0,0,0)' %}{{ section.settings.icon_color.rgb }}{% else %}var(--text-color){% endif %};
+  }
+
   #shopify-section-{{ section.id }} .lead-form {
     display: grid;
-    gap: var(--spacing-10, 2.5rem);
-    align-items: center;
+    position: relative;
   }
 
-  #shopify-section-{{ section.id }} .lead-form__image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: var(--rounded, 0);
+  #shopify-section-{{ section.id }} .lead-form__content {
+    display: grid;
+    gap: 2rem;
+    max-width: 34rem;
+    padding-block: 3rem;
   }
 
-  #shopify-section-{{ section.id }} .lead-form__disclaimer {
-    font-size: var(--text-xs);
+  #shopify-section-{{ section.id }} .lead-form__logo {
+    width: {{ section.settings.logo_width }}px;
+    height: auto;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__benefits {
+    display: grid;
+    gap: .75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    font-weight: 500;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__benefit svg {
+    flex-shrink: 0;
+    margin-block-start: .1em;
+    color: rgb(var(--lead-form-icon-color));
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__benefit path {
+    stroke: rgb(var(--background));
+  }
+
+  /* Reserve space while Klaviyo loads the form, to limit layout shift */
+  #shopify-section-{{ section.id }} .lead-form__form {
+    min-height: {{ section.settings.form_min_height }}px;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__form-placeholder {
+    display: grid;
+    place-items: center;
+    min-height: inherit;
+    padding: 1.5rem;
+    border: 1px dashed rgb(var(--text-color) / .4);
+    text-align: center;
+    font-size: var(--text-sm);
     opacity: .75;
   }
 
-  #shopify-section-{{ section.id }} .lead-form__disclaimer a {
-    text-decoration: underline;
-    text-underline-offset: .2em;
+  #shopify-section-{{ section.id }} .lead-form__testimonial {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding-block-start: 1rem;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__quote {
+    font-size: var(--text-lg);
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__author {
+    display: flex;
+    align-items: center;
+    gap: .875rem;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__avatar {
+    width: 2.75rem;
+    height: 2.75rem;
+    object-fit: cover;
+    border-radius: var(--rounded-full);
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__author-name {
+    font-weight: 600;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__author-role {
+    font-size: var(--text-sm);
+    opacity: .7;
+  }
+
+  #shopify-section-{{ section.id }} .lead-form__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media screen and (max-width: 999px) {
+    #shopify-section-{{ section.id }} .lead-form__media {
+      order: 1;
+      aspect-ratio: 4 / 3;
+    }
+
+    #shopify-section-{{ section.id }} .lead-form--has-mobile-image .lead-form__media--desktop {
+      display: none;
+    }
   }
 
   @media screen and (min-width: 1000px) {
     #shopify-section-{{ section.id }} .lead-form--with-image {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--spacing-16, 4rem);
+      min-height: {{ section.settings.desktop_height }}px;
+      align-items: center;
     }
 
-    #shopify-section-{{ section.id }} .lead-form--image-start .lead-form__media {
-      order: -1;
+    #shopify-section-{{ section.id }} .lead-form--with-image .lead-form__media {
+      position: absolute;
+      inset: 0;
+    }
+
+    #shopify-section-{{ section.id }} .lead-form--with-image .lead-form__media--mobile {
+      display: none;
+    }
+
+    #shopify-section-{{ section.id }} .lead-form--with-image .container {
+      position: relative;
+      width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .lead-form__content {
+      width: 40%;
+      max-width: none;
+      padding-block: 5rem;
+    }
+
+    #shopify-section-{{ section.id }} .lead-form:not(.lead-form--with-image) .lead-form__content {
+      margin-inline: auto;
+    }
+
+    /* Over the image, the content sits on a card using the color scheme's background so it stays readable */
+    #shopify-section-{{ section.id }} .lead-form--with-image .lead-form__content {
+      margin-block: 4rem;
+      padding: 3rem;
+      background: rgb(var(--background));
     }
   }
 </style>
 
 {%- liquid
   assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
-  assign form_id = 'lead-form-' | append: section.id
-  assign campaign_tag = section.settings.campaign_tag | strip
+  assign klaviyo_form_id = section.settings.klaviyo_form_id | default: page.metafields.custom.klaviyo_form_id | strip
 
-  assign tags = 'lead'
-  if campaign_tag != blank
-    assign tags = tags | append: ', ' | append: campaign_tag
-  endif
+  assign benefit_blocks = section.blocks | where: 'type', 'benefit'
 
-  if section.settings.image != blank
-    assign text_alignment = 'start'
-  else
-    assign text_alignment = 'center'
-  endif
+  assign image_style = 'object-position: ' | append: section.settings.image.presentation.focal_point
+  assign mobile_image_style = 'object-position: ' | append: section.settings.mobile_image.presentation.focal_point
+  assign logo_sizes = section.settings.logo_width | append: 'px'
 -%}
 
-<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
-  <div class="container {% if section.settings.image == blank %}container--xs{% endif %}">
-    <div class="lead-form {% if section.settings.image != blank %}lead-form--with-image lead-form--image-{{ section.settings.image_position }}{% endif %}">
-      <div class="section-stack text-{{ text_alignment }}">
-        {%- render 'section-header',
-          subheading: section.settings.subheading,
-          heading: section.settings.title,
-          heading_style: section.settings.heading_style,
-          content: section.settings.content,
-          text_alignment: text_alignment
-        -%}
+<div id="signup" class="lead-form scroll-margin-offset color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.image != blank %}lead-form--with-image{% endif %} {% if section.settings.mobile_image != blank %}lead-form--has-mobile-image{% endif %} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  {%- if section.settings.image != blank -%}
+    <div class="lead-form__media lead-form__media--desktop">
+      {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: sizes: '100vw', widths: '600,800,1000,1200,1400,1600,1800,2000,2400,2800,3200', style: image_style -}}
+    </div>
+  {%- endif -%}
 
-        {%- form 'customer', id: form_id, class: 'form' -%}
-          {%- if form.posted_successfully? -%}
-            {%- render 'banner', status: 'success', content: section.settings.success_message, text_alignment: text_alignment -%}
-          {%- else -%}
-            {%- if form.errors -%}
-              {%- capture error_message -%}{{ form.errors.translated_fields[form.errors.first] | capitalize }} {{ form.errors.messages[form.errors.first] }}{%- endcapture -%}
-              {%- render 'banner', status: 'error', content: error_message -%}
+  <div class="container">
+    <div class="lead-form__content">
+      {%- if section.settings.logo != blank -%}
+        {{- section.settings.logo | image_url: width: 600 | image_tag: sizes: logo_sizes, widths: '200,300,400,600', class: 'lead-form__logo' -}}
+      {%- endif -%}
+
+      {%- render 'section-header',
+        subheading: section.settings.subheading,
+        heading: section.settings.title,
+        heading_style: section.settings.heading_style,
+        content: section.settings.content,
+        text_alignment: 'start'
+      -%}
+
+      {%- if benefit_blocks.size > 0 -%}
+        <ul class="lead-form__benefits" role="list">
+          {%- for block in benefit_blocks -%}
+            {%- if block.settings.text != blank -%}
+              <li class="lead-form__benefit" {{ block.shopify_attributes }}>
+                <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <circle cx="10" cy="10" r="10" fill="currentColor"/>
+                  <path d="m6 10.25 2.75 2.75L14 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>{{ block.settings.text }}</span>
+              </li>
             {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
 
-            <input type="hidden" name="contact[tags]" value="{{ tags | escape }}">
-
-            {%- if section.settings.redirect_url != blank -%}
-              <input type="hidden" name="return_to" value="{{ section.settings.redirect_url }}">
-            {%- endif -%}
-
-            <div class="fieldset">
-              {%- if section.settings.show_name -%}
-                <div class="fieldset-row">
-                  {%- assign label = 'customer.register.first_name' | t -%}
-                  {%- render 'input', type: 'text', name: 'contact[first_name]', label: label, value: customer.first_name, required: section.settings.require_name, autocomplete: 'given-name', id_prefix: form_id -%}
-
-                  {%- assign label = 'customer.register.last_name' | t -%}
-                  {%- render 'input', type: 'text', name: 'contact[last_name]', label: label, value: customer.last_name, required: section.settings.require_name, autocomplete: 'family-name', id_prefix: form_id -%}
-                </div>
-              {%- endif -%}
-
-              {%- assign label = 'contact.form.email' | t -%}
-              {%- render 'input', type: 'email', name: 'contact[email]', label: label, value: customer.email, required: true, autocomplete: 'email', id_prefix: form_id -%}
-
-              {%- for block in section.blocks -%}
-                {%- assign field_title = block.settings.title -%}
-
-                {%- if field_title == blank -%}
-                  {%- capture field_title -%}Custom field {% increment custom_field %}{%- endcapture -%}
-                {%- endif -%}
-
-                {%- capture name -%}contact[note][{{ field_title | escape }}]{%- endcapture -%}
-
-                {%- case block.type -%}
-                  {%- when 'text' -%}
-                    {%- if block.settings.use_long_text -%}
-                      {%- render 'input', name: name, label: field_title, required: block.settings.required, multiline: 4, id_prefix: form_id -%}
-                    {%- else -%}
-                      {%- render 'input', type: 'text', name: name, label: field_title, required: block.settings.required, id_prefix: form_id -%}
-                    {%- endif -%}
-
-                  {%- when 'dropdown' -%}
-                    {%- if block.settings.values != blank -%}
-                      {%- assign values = block.settings.values | split: ',' -%}
-                      {%- render 'select', option_values: values, show_empty_value: true, name: name, label: field_title, required: block.settings.required -%}
-                    {%- endif -%}
-                {%- endcase -%}
-              {%- endfor -%}
-            </div>
-
-            {%- render 'button', content: section.settings.button_text, type: 'submit', stretch: true -%}
-
-            {%- if section.settings.disclaimer != blank -%}
-              <div class="lead-form__disclaimer prose">
-                {{- section.settings.disclaimer -}}
-              </div>
-            {%- endif -%}
-          {%- endif -%}
-        {%- endform -%}
+      <div class="lead-form__form">
+        {%- if klaviyo_form_id != blank -%}
+          <div class="klaviyo-form-{{ klaviyo_form_id | escape }}"></div>
+        {%- elsif request.design_mode -%}
+          <div class="lead-form__form-placeholder">Add a Klaviyo form ID in the section settings to show the form here.</div>
+        {%- endif -%}
       </div>
 
-      {%- if section.settings.image != blank -%}
-        <div class="lead-form__media">
-          {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: sizes: '(max-width: 999px) 100vw, 50vw', widths: '400,600,800,1000,1200,1400,1600,1800,2000', class: 'lead-form__image' -}}
-        </div>
+      {%- if section.settings.testimonial_quote != blank -%}
+        <figure class="lead-form__testimonial">
+          <blockquote class="lead-form__quote">
+            <p>“{{ section.settings.testimonial_quote }}”</p>
+          </blockquote>
+
+          {%- if section.settings.testimonial_author != blank or section.settings.testimonial_avatar != blank -%}
+            <figcaption class="lead-form__author">
+              {%- if section.settings.testimonial_avatar != blank -%}
+                {{- section.settings.testimonial_avatar | image_url: width: 120 | image_tag: widths: '60,120', sizes: '44px', class: 'lead-form__avatar', alt: '' -}}
+              {%- endif -%}
+
+              <div>
+                {%- if section.settings.testimonial_author != blank -%}
+                  <p class="lead-form__author-name">{{ section.settings.testimonial_author }}</p>
+                {%- endif -%}
+
+                {%- if section.settings.testimonial_role != blank -%}
+                  <p class="lead-form__author-role">{{ section.settings.testimonial_role }}</p>
+                {%- endif -%}
+              </div>
+            </figcaption>
+          {%- endif -%}
+        </figure>
       {%- endif -%}
     </div>
   </div>
+
+  {%- if section.settings.mobile_image != blank -%}
+    <div class="lead-form__media lead-form__media--mobile">
+      {{- section.settings.mobile_image | image_url: width: section.settings.mobile_image.width | image_tag: sizes: '100vw', widths: '400,600,800,1000,1200', style: mobile_image_style -}}
+    </div>
+  {%- endif -%}
 </div>
 
 {% schema %}
@@ -154,7 +264,10 @@
   "class": "shopify-section--lead-form",
   "tag": "section",
   "disabled_on": {
-    "groups": ["header", "custom.overlay"]
+    "groups": [
+      "header",
+      "custom.overlay"
+    ]
   },
   "settings": [
     {
@@ -171,23 +284,48 @@
     },
     {
       "type": "header",
-      "content": "t:sections.lead_form.campaign_category"
+      "content": "t:sections.lead_form.image_category"
     },
     {
-      "type": "text",
-      "id": "campaign_tag",
-      "label": "t:sections.lead_form.campaign_tag",
-      "info": "t:sections.lead_form.campaign_tag_info"
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.lead_form.image",
+      "info": "t:sections.lead_form.image_info"
     },
     {
-      "type": "url",
-      "id": "redirect_url",
-      "label": "t:sections.lead_form.redirect_url",
-      "info": "t:sections.lead_form.redirect_url_info"
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "t:global.image.mobile_image",
+      "info": "t:sections.lead_form.mobile_image_info"
+    },
+    {
+      "type": "range",
+      "id": "desktop_height",
+      "label": "t:sections.lead_form.desktop_height",
+      "min": 400,
+      "max": 1000,
+      "step": 20,
+      "unit": "px",
+      "default": 680
     },
     {
       "type": "header",
       "content": "t:sections.lead_form.content_category"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:sections.lead_form.logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "t:sections.lead_form.logo_width",
+      "min": 60,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "default": 130
     },
     {
       "type": "inline_richtext",
@@ -239,109 +377,68 @@
       "default": "<p>Tell visitors what they'll get by signing up.</p>"
     },
     {
-      "type": "image_picker",
-      "id": "image",
-      "label": "t:global.image.image"
-    },
-    {
-      "type": "select",
-      "id": "image_position",
-      "label": "t:sections.lead_form.image_position",
-      "options": [
-        {
-          "value": "start",
-          "label": "t:sections.lead_form.image_position_options.start"
-        },
-        {
-          "value": "end",
-          "label": "t:sections.lead_form.image_position_options.end"
-        }
-      ],
-      "default": "end"
+      "type": "color",
+      "id": "icon_color",
+      "label": "t:sections.lead_form.icon_color",
+      "info": "t:sections.lead_form.icon_color_info"
     },
     {
       "type": "header",
       "content": "t:sections.lead_form.form_category"
     },
     {
-      "type": "checkbox",
-      "id": "show_name",
-      "label": "t:sections.lead_form.show_name",
-      "default": true
+      "type": "text",
+      "id": "klaviyo_form_id",
+      "label": "t:sections.lead_form.klaviyo_form_id",
+      "info": "t:sections.lead_form.klaviyo_form_id_info"
     },
     {
-      "type": "checkbox",
-      "id": "require_name",
-      "label": "t:sections.lead_form.require_name",
-      "default": false
+      "type": "range",
+      "id": "form_min_height",
+      "label": "t:sections.lead_form.form_min_height",
+      "info": "t:sections.lead_form.form_min_height_info",
+      "min": 0,
+      "max": 400,
+      "step": 10,
+      "unit": "px",
+      "default": 120
+    },
+    {
+      "type": "header",
+      "content": "t:sections.lead_form.testimonial_category"
     },
     {
       "type": "text",
-      "id": "button_text",
-      "label": "t:sections.lead_form.button_text",
-      "default": "Sign up"
+      "id": "testimonial_quote",
+      "label": "t:sections.lead_form.testimonial_quote",
+      "info": "t:sections.lead_form.testimonial_quote_info"
     },
     {
-      "type": "inline_richtext",
-      "id": "success_message",
-      "label": "t:sections.lead_form.success_message",
-      "default": "Thanks for signing up! We'll be in touch soon."
+      "type": "text",
+      "id": "testimonial_author",
+      "label": "t:sections.lead_form.testimonial_author"
     },
     {
-      "type": "richtext",
-      "id": "disclaimer",
-      "label": "t:sections.lead_form.disclaimer",
-      "info": "t:sections.lead_form.disclaimer_info",
-      "default": "<p>By signing up, you agree to receive marketing emails from us. You can unsubscribe at any time.</p>"
+      "type": "text",
+      "id": "testimonial_role",
+      "label": "t:sections.lead_form.testimonial_role"
+    },
+    {
+      "type": "image_picker",
+      "id": "testimonial_avatar",
+      "label": "t:sections.lead_form.testimonial_avatar"
     }
   ],
   "blocks": [
     {
-      "type": "text",
-      "name": "t:sections.lead_form.blocks.text.name",
+      "type": "benefit",
+      "name": "t:sections.lead_form.blocks.benefit.name",
       "settings": [
         {
-          "type": "text",
-          "id": "title",
-          "label": "t:sections.lead_form.blocks.text.name_label",
-          "default": "Custom field"
-        },
-        {
-          "type": "checkbox",
-          "id": "use_long_text",
-          "label": "t:sections.lead_form.blocks.text.use_long_text",
-          "default": false
-        },
-        {
-          "type": "checkbox",
-          "id": "required",
-          "label": "t:sections.lead_form.blocks.text.required",
-          "default": false
-        }
-      ]
-    },
-    {
-      "type": "dropdown",
-      "name": "t:sections.lead_form.blocks.dropdown.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "title",
-          "label": "t:sections.lead_form.blocks.dropdown.name_label",
-          "default": "Custom field"
-        },
-        {
-          "type": "text",
-          "id": "values",
-          "label": "t:sections.lead_form.blocks.dropdown.values",
-          "info": "t:sections.lead_form.blocks.dropdown.values_info",
-          "default": "value 1, value 2, value 3"
-        },
-        {
-          "type": "checkbox",
-          "id": "required",
-          "label": "t:sections.lead_form.blocks.dropdown.required",
-          "default": false
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "t:global.text.content",
+          "default": "A reason to sign up"
         }
       ]
     }
@@ -349,7 +446,27 @@
   "presets": [
     {
       "name": "t:sections.lead_form.presets.lead_form.name",
-      "category": "t:global.categories.call_to_action"
+      "category": "t:global.categories.call_to_action",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "text": "First benefit of signing up"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "text": "Second benefit of signing up"
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "text": "Third benefit of signing up"
+          }
+        }
+      ]
     }
   ]
 }

@@ -689,39 +689,69 @@
         }
       }
     },
-    "lead_form": {
-      "name": "Lead form",
-      "campaign_category": "Campaign",
-      "campaign_tag": "Campaign tag",
-      "campaign_tag_info": "Added to every lead alongside the \"lead\" tag, so you can segment them in Customers. E.g. summer-giveaway-2026.",
-      "redirect_url": "Redirect after sign up",
-      "redirect_url_info": "Optional thank-you page to send leads to after submitting. Leave blank to show the success message instead.",
-      "content_category": "Content",
+    "benefits_list": {
+      "name": "Benefits list",
+      "color_scheme_info": "Applies to the card behind the content and image.",
       "image_position": "Image position (desktop)",
       "image_position_options": {
         "start": "Left",
         "end": "Right"
       },
-      "form_category": "Form",
-      "show_name": "Show name fields",
-      "require_name": "Require name",
-      "button_text": "Button text",
-      "success_message": "Success message",
-      "disclaimer": "Disclaimer",
-      "disclaimer_info": "Shown below the button. Use it to link to your privacy policy.",
+      "image_aspect_ratio": "Image aspect ratio",
+      "image_aspect_ratio_info": "The image is cropped to fill this shape. Set a focal point on the image to control the crop.",
+      "image_aspect_ratio_options": {
+        "square": "Square (1:1)",
+        "portrait_4_5": "Portrait (4:5)",
+        "portrait_3_4": "Portrait (3:4)",
+        "portrait_2_3": "Tall portrait (2:3)",
+        "landscape_4_3": "Landscape (4:3)",
+        "landscape_3_2": "Landscape (3:2)",
+        "landscape_16_9": "Widescreen (16:9)",
+        "fill": "Match content height"
+      },
+      "marker_style": "Marker style",
+      "marker_style_options": {
+        "number": "Numbers",
+        "icon": "Icons"
+      },
       "blocks": {
-        "text": {
-          "name": "Text field",
-          "name_label": "Name",
-          "use_long_text": "Use long text",
-          "required": "Required"
-        },
-        "dropdown": {
-          "name": "Dropdown",
-          "name_label": "Name",
-          "values": "Values",
-          "values_info": "Separate each value by a comma.",
-          "required": "Required"
+        "item": {
+          "name": "Benefit",
+          "icon_info": "Only shown when the marker style is set to icons."
+        }
+      },
+      "presets": {
+        "benefits_list": {
+          "name": "Benefits list"
+        }
+      }
+    },
+    "lead_form": {
+      "name": "Lead form",
+      "image_category": "Image",
+      "image": "Background image",
+      "image_info": "Fills the section behind the content on desktop. Choose an image with clear space on the left. 2800 x 1600px .jpg recommended.",
+      "mobile_image_info": "Shown below the content on mobile. Uses the background image if left empty.",
+      "desktop_height": "Minimum height (desktop)",
+      "content_category": "Content",
+      "logo": "Logo",
+      "logo_width": "Logo width",
+      "icon_color": "Benefit icon color",
+      "icon_color_info": "Uses the color scheme text color if left empty.",
+      "form_category": "Form",
+      "klaviyo_form_id": "Klaviyo form ID",
+      "klaviyo_form_id_info": "The ID from your Klaviyo embedded form (Signup forms > your form > Publish > Embed code), e.g. XyZ123. Leave blank to use the page's custom.klaviyo_form_id metafield.",
+      "form_min_height": "Reserved form height",
+      "form_min_height_info": "Holds space for the form while Klaviyo loads it, so the page doesn't jump.",
+      "testimonial_category": "Testimonial",
+      "testimonial_quote": "Quote",
+      "testimonial_quote_info": "Leave blank to hide the testimonial.",
+      "testimonial_author": "Name",
+      "testimonial_role": "Role",
+      "testimonial_avatar": "Photo",
+      "blocks": {
+        "benefit": {
+          "name": "Benefit"
         }
       },
       "presets": {
