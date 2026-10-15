@@ -1,0 +1,49 @@
+{%- doc -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  TESTIMONIAL CARD
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Renders a floating testimonial card with a star rating, a quote and the customer name. Styles live in
+  testimonial-card.css, which the calling section must load once.
+
+  @param {number} rating - Star rating out of 5, in steps of 0.5
+  @param {string} quote - The testimonial text
+  @param {string} [author] - The customer name
+  @param {object} [color_scheme] - Optional color scheme (e.g. block.settings.color_scheme)
+  @param {string} [class] - Optional extra classes
+  @param {string} [style] - Optional inline styles (e.g. position variables)
+  @param {string} [attributes] - Optional extra attributes (e.g. block.shopify_attributes)
+{%- enddoc -%}
+
+{%- assign rating_max = 5 -%}
+
+{%- if quote != blank -%}
+  <figure class="testimonial-card {% if color_scheme != blank %}color-scheme color-scheme--{{ color_scheme.id }}{% endif %} {{ class }}" {% if style != blank %}style="{{ style }}"{% endif %} {{ attributes }}>
+    {%- if rating > 0 -%}
+      <div class="testimonial-card__stars" role="img" aria-label="{{ 'general.rating.info' | t: rating_value: rating, rating_max: rating_max }}">
+        {%- for i in (1..rating_max) -%}
+          {%- assign half_threshold = i | minus: 0.5 -%}
+
+          <svg aria-hidden="true" focusable="false" class="testimonial-card__star" viewBox="0 0 12 11">
+            {%- if i <= rating -%}
+              <path d="M6 0v8.635L2.292 11 3.48 6.87 0 4.202l4.443-.187L6 0Zm0 0v8.635L9.708 11 8.52 6.87 12 4.202l-4.443-.187L6 0Z" fill="currentColor"/>
+            {%- elsif half_threshold <= rating -%}
+              <path d="M6 0v8.635L2.292 11 3.48 6.87 0 4.202l4.443-.187L6 0Z" fill="currentColor"/>
+              <path d="M6 0v8.635L9.708 11 8.52 6.87 12 4.202l-4.443-.187L6 0Z" fill="currentColor" fill-opacity="0.25"/>
+            {%- else -%}
+              <path d="M6 0v8.635L2.292 11 3.48 6.87 0 4.202l4.443-.187L6 0Zm0 0v8.635L9.708 11 8.52 6.87 12 4.202l-4.443-.187L6 0Z" fill="currentColor" fill-opacity="0.25"/>
+            {%- endif -%}
+          </svg>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <blockquote class="testimonial-card__quote">
+      <p>{{ quote }}</p>
+    </blockquote>
+
+    {%- if author != blank -%}
+      <figcaption class="testimonial-card__author">{{ author }}</figcaption>
+    {%- endif -%}
+  </figure>
+{%- endif -%}
