@@ -1,0 +1,32 @@
+{
+  "sections": {
+    "lead-form": {
+      "type": "lead-form",
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "campaign_tag": "",
+        "redirect_url": "",
+        "subheading": "",
+        "title": "Get in touch",
+        "heading_style": "h1",
+        "content": "<p>Tell visitors what they'll get by signing up.</p>",
+        "image_position": "end",
+        "show_name": true,
+        "require_name": false,
+        "button_text": "Sign up",
+        "success_message": "Thanks for signing up! We'll be in touch soon.",
+        "disclaimer": "<p>By signing up, you agree to receive marketing emails from us. You can unsubscribe at any time.</p>"
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "color_scheme": "",
+        "show_title": false,
+        "page_width": "xs"
+      }
+    }
+  },
+  "order": ["lead-form", "main"]
+}

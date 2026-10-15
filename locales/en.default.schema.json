@@ -689,6 +689,47 @@
         }
       }
     },
+    "lead_form": {
+      "name": "Lead form",
+      "campaign_category": "Campaign",
+      "campaign_tag": "Campaign tag",
+      "campaign_tag_info": "Added to every lead alongside the \"lead\" tag, so you can segment them in Customers. E.g. summer-giveaway-2026.",
+      "redirect_url": "Redirect after sign up",
+      "redirect_url_info": "Optional thank-you page to send leads to after submitting. Leave blank to show the success message instead.",
+      "content_category": "Content",
+      "image_position": "Image position (desktop)",
+      "image_position_options": {
+        "start": "Left",
+        "end": "Right"
+      },
+      "form_category": "Form",
+      "show_name": "Show name fields",
+      "require_name": "Require name",
+      "button_text": "Button text",
+      "success_message": "Success message",
+      "disclaimer": "Disclaimer",
+      "disclaimer_info": "Shown below the button. Use it to link to your privacy policy.",
+      "blocks": {
+        "text": {
+          "name": "Text field",
+          "name_label": "Name",
+          "use_long_text": "Use long text",
+          "required": "Required"
+        },
+        "dropdown": {
+          "name": "Dropdown",
+          "name_label": "Name",
+          "values": "Values",
+          "values_info": "Separate each value by a comma.",
+          "required": "Required"
+        }
+      },
+      "presets": {
+        "lead_form": {
+          "name": "Lead form"
+        }
+      }
+    },
     "countdown_timer": {
       "name": "Countdown timer",
       "timezone_information": "Expiration date is calculated from the [store primary timezone](/admin/settings/general).",
