@@ -117,10 +117,68 @@
         "show_title": false,
         "page_width": "xs"
       }
+    },
+    "product-points": {
+      "type": "text-with-icons",
+      "blocks": {
+        "no-plastic": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-leaf",
+            "icon_width": 32,
+            "mobile_icon_width": 28,
+            "title": "Plant-based materials",
+            "content": ""
+          }
+        },
+        "organic": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-not-allowed",
+            "icon_width": 32,
+            "mobile_icon_width": 28,
+            "title": "Chlorine bleach free",
+            "content": ""
+          }
+        },
+        "gentle": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-recycle",
+            "icon_width": 32,
+            "mobile_icon_width": 28,
+            "title": "Low-waste packaging",
+            "content": ""
+          }
+        },
+        "vetted": {
+          "type": "item",
+          "settings": {
+            "icon": "picto-success",
+            "icon_width": 32,
+            "mobile_icon_width": 28,
+            "title": "Certified organic cotton",
+            "content": ""
+          }
+        }
+      },
+      "block_order": [
+        "no-plastic",
+        "organic",
+        "gentle",
+        "vetted"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "separate_section_with_border": false,
+        "stack_on_mobile": false,
+        "text_alignment": "center"
+      }
     }
   },
   "order": [
     "lead-form",
+    "product-points",
     "benefits",
     "main"
   ]
