@@ -6,7 +6,7 @@
       assign has_product_page_disclosures = true
       break
     endif
-  endfor
+  endfor 
 
   assign has_content_below_gallery = false
   assign allow_transparent_header = section.settings.allow_transparent_header
@@ -1342,6 +1342,33 @@
           "id": "text",
           "label": "t:global.text.content",
           "default": "<p>Share some content to your customers about your products.</p>"
+        }
+      ]
+    },
+    {
+      "type": "promotion",
+      "name": "t:sections.main_product.blocks.promotion.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "discount_code",
+          "label": "t:sections.main_product.blocks.promotion.discount_code",
+          "info": "t:sections.main_product.blocks.promotion.discount_code_info",
+          "default": "FREESHIPPING"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "text",
+          "label": "t:sections.main_product.blocks.promotion.text",
+          "info": "t:sections.main_product.blocks.promotion.text_info",
+          "default": "Want this delivery on us? Use FREESHIPPING at checkout"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "applied_text",
+          "label": "t:sections.main_product.blocks.promotion.applied_text",
+          "info": "t:sections.main_product.blocks.promotion.applied_text_info",
+          "default": "FREESHIPPING applied. Free delivery will show at checkout"
         }
       ]
     },

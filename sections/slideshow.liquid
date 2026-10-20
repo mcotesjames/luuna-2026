@@ -6,8 +6,30 @@
   ------------------------------------------------------------------------------------------------------------------------
 {%- endcomment -%}
 
-{%- if section.blocks.size > 0 -%}
+{%- liquid
+  assign slide_blocks = section.blocks | reject: 'type', 'testimonial'
+  assign testimonial_blocks = section.blocks | where: 'type', 'testimonial'
+-%}
+
+{%- if slide_blocks.size > 0 -%}
   {%- assign carousel_id = 'carousel-' | append: section.id -%}
+
+  <style>
+    @media screen and (min-width: 700px) {
+      .content-over-media--gradient-mobile-only::before {
+        background: none;
+      }
+    }
+  </style>
+
+  {%- if testimonial_blocks.size > 0 -%}
+    {{- 'testimonial-card.css' | asset_url | stylesheet_tag -}}
+    <script type="module" src="{{ 'slideshow-testimonials.js' | asset_url }}"></script>
+  {%- endif -%}
+
+  {%- if section.settings.remove_slide_transition -%}
+    <script type="module" src="{{ 'slideshow-no-transition.js' | asset_url }}"></script>
+  {%- endif -%}
 
   <slideshow-carousel
     id="{{ carousel_id }}"
@@ -17,6 +39,12 @@
       allow-transparent-header
     {% endif %}
     cell-selector=".slideshow__slide"
+    {% if section.settings.mobile_only_slideshow %}
+      disabled-on="sm"
+    {% endif %}
+    {% if section.settings.remove_slide_transition %}
+      no-transition
+    {% endif %}
     {% if section.settings.autoplay %}
       autoplay="{{ section.settings.cycle_speed }}"
     {% endif %}
@@ -26,9 +54,9 @@
     role="region"
     style="{% render 'surface', background: section.settings.background %}"
   >
-    {%- for block in section.blocks -%}
+    {%- for block in slide_blocks -%}
       {%- capture slide -%}
-        <div class="content-over-media content-over-media--{{ section.settings.media_size }}" style="--content-over-media-content-max-width: {{ block.settings.content_max_width }}px; --content-over-media-gradient-overlay: {{ block.settings.gradient_overlay }}">
+        <div class="content-over-media content-over-media--{{ section.settings.media_size }} {% if block.settings.gradient_overlay_mobile_only %}content-over-media--gradient-mobile-only{% endif %}" style="--content-over-media-content-max-width: {{ block.settings.content_max_width }}px; --content-over-media-gradient-overlay: {{ block.settings.gradient_overlay }}">
           {%- comment -%}---------------- MEDIA ----------------{%- endcomment -%}
           {%- if block.type == 'image' -%}
             {%- if block.settings.image != blank -%}
@@ -163,6 +191,30 @@
                 </div>
               {%- endif -%}
             </div>
+
+            {%- comment -%}
+              Testimonials are section-level blocks shown on every slide, inside the slide content so they sit in the
+              page flow and never cover the text. Editor attributes go on the first slide's copy only, so selecting a
+              testimonial block in the editor targets a single element.
+            {%- endcomment -%}
+            {%- if testimonial_blocks.size > 0 -%}
+              <slideshow-testimonials class="slideshow__testimonials" autoplay="3000">
+                {%- for testimonial in testimonial_blocks -%}
+                  {%- liquid
+                    assign is_selected = ''
+                    if forloop.first
+                      assign is_selected = 'is-selected'
+                    endif
+
+                    assign testimonial_attributes = ''
+                    if forloop.parentloop.first
+                      assign testimonial_attributes = testimonial.shopify_attributes
+                    endif
+                  -%}
+                  {%- render 'testimonial-card', rating: testimonial.settings.rating, quote: testimonial.settings.quote, author: testimonial.settings.author, color_scheme: testimonial.settings.color_scheme, class: is_selected, attributes: testimonial_attributes -%}
+                {%- endfor -%}
+              </slideshow-testimonials>
+            {%- endif -%}
           </div>
         </div>
 
@@ -209,13 +261,13 @@
       {%- endif -%}
     {%- endfor -%}
 
-    {%- if section.blocks.size > 1 -%}
+    {%- if slide_blocks.size > 1 -%}
       <carousel-navigation
         aria-controls="{{ carousel_id }}"
-        class="page-dots {% if section.settings.autoplay %}page-dots--autoplay{% endif %}"
+        class="page-dots {% if section.settings.autoplay %}page-dots--autoplay{% endif %} {% if section.settings.mobile_only_slideshow %}sm:hidden{% endif %}"
         style="{% render 'surface', text_color: section.settings.controls_color %}"
       >
-        {%- for i in (1..section.blocks.size) -%}
+        {%- for i in (1..slide_blocks.size) -%}
           <button class="tap-area" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">
             <span class="sr-only">{{ 'general.accessibility.go_to_item' | t: index: forloop.index }}</span>
 
@@ -237,6 +289,7 @@
       </button>
     {%- endif -%}
   </slideshow-carousel>
+
 {%- endif -%}
 
 {% schema %}
@@ -244,7 +297,7 @@
   "name": "t:sections.slideshow.name",
   "class": "shopify-section--slideshow",
   "tag": "section",
-  "max_blocks": 6,
+  "max_blocks": 16,
   "disabled_on": {
     "groups": ["header", "custom.overlay"]
   },
@@ -304,6 +357,20 @@
     },
     {
       "type": "checkbox",
+      "id": "mobile_only_slideshow",
+      "label": "Only rotate slides on mobile",
+      "info": "On desktop, only the first image or video is shown.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "remove_slide_transition",
+      "label": "Remove transition between slides",
+      "info": "Slides change instantly, without the fade and zoom animation.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
       "id": "autoplay",
       "label": "t:sections.slideshow.auto_rotate_between_slides",
       "default": true
@@ -318,9 +385,9 @@
     {
       "type": "range",
       "id": "cycle_speed",
-      "min": 4,
+      "min": 1,
       "max": 20,
-      "step": 1,
+      "step": 0.5,
       "unit": "sec",
       "label": "t:sections.slideshow.cycle_speed",
       "default": 5,
@@ -642,6 +709,12 @@
           "label": "t:global.colors.gradient_overlay",
           "default": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)",
           "info": "t:sections.slideshow.blocks.image.gradient_overlay_info"
+        },
+        {
+          "type": "checkbox",
+          "id": "gradient_overlay_mobile_only",
+          "label": "Only show gradient overlay on mobile",
+          "default": false
         }
       ]
     },
@@ -939,6 +1012,45 @@
           "label": "t:global.colors.gradient_overlay",
           "default": "linear-gradient(180deg, rgba(54, 54, 54, 0.2) 0%, rgba(4, 4, 4, 0.65) 100%)",
           "info": "t:sections.slideshow.blocks.image.gradient_overlay_info"
+        },
+        {
+          "type": "checkbox",
+          "id": "gradient_overlay_mobile_only",
+          "label": "Only show gradient overlay on mobile",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Star rating",
+          "min": 0,
+          "max": 5,
+          "step": 0.5,
+          "default": 5
+        },
+        {
+          "type": "inline_richtext",
+          "id": "quote",
+          "label": "Quote",
+          "default": "Finally, period care I feel good about."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "Name",
+          "default": "Sample customer"
+        },
+        {
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:global.colors.scheme",
+          "default": "scheme-1"
         }
       ]
     }

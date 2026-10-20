@@ -698,6 +698,77 @@
         }
       }
     },
+    "benefits_list": {
+      "name": "Benefits list",
+      "color_scheme_info": "Applies to the card behind the content and image.",
+      "image_position": "Image position (desktop)",
+      "image_position_options": {
+        "start": "Left",
+        "end": "Right"
+      },
+      "image_aspect_ratio": "Image aspect ratio",
+      "image_aspect_ratio_info": "The image is cropped to fill this shape. Set a focal point on the image to control the crop.",
+      "image_aspect_ratio_options": {
+        "square": "Square (1:1)",
+        "portrait_4_5": "Portrait (4:5)",
+        "portrait_3_4": "Portrait (3:4)",
+        "portrait_2_3": "Tall portrait (2:3)",
+        "landscape_4_3": "Landscape (4:3)",
+        "landscape_3_2": "Landscape (3:2)",
+        "landscape_16_9": "Widescreen (16:9)",
+        "fill": "Match content height"
+      },
+      "marker_style": "Marker style",
+      "marker_style_options": {
+        "number": "Numbers",
+        "icon": "Icons"
+      },
+      "blocks": {
+        "item": {
+          "name": "Benefit",
+          "icon_info": "Only shown when the marker style is set to icons."
+        }
+      },
+      "presets": {
+        "benefits_list": {
+          "name": "Benefits list"
+        }
+      }
+    },
+    "lead_form": {
+      "name": "Lead form",
+      "image_category": "Image",
+      "image": "Background image",
+      "image_info": "Fills the section behind the content on desktop. Choose an image with clear space on the left. 2800 x 1600px .jpg recommended.",
+      "mobile_image_info": "Shown below the content on mobile. Uses the background image if left empty.",
+      "desktop_height": "Minimum height (desktop)",
+      "content_category": "Content",
+      "logo": "Logo",
+      "logo_width": "Logo width",
+      "icon_color": "Benefit icon color",
+      "icon_color_info": "Uses the color scheme text color if left empty.",
+      "form_category": "Form",
+      "klaviyo_form_id": "Klaviyo form ID",
+      "klaviyo_form_id_info": "The ID from your Klaviyo embedded form (Signup forms > your form > Publish > Embed code), e.g. XyZ123. Leave blank to use the page's custom.klaviyo_form_id metafield.",
+      "form_min_height": "Reserved form height",
+      "form_min_height_info": "Holds space for the form while Klaviyo loads it, so the page doesn't jump.",
+      "testimonial_category": "Testimonial",
+      "testimonial_quote": "Quote",
+      "testimonial_quote_info": "Leave blank to hide the testimonial.",
+      "testimonial_author": "Name",
+      "testimonial_role": "Role",
+      "testimonial_avatar": "Photo",
+      "blocks": {
+        "benefit": {
+          "name": "Benefit"
+        }
+      },
+      "presets": {
+        "lead_form": {
+          "name": "Lead form"
+        }
+      }
+    },
     "countdown_timer": {
       "name": "Countdown timer",
       "timezone_information": "Expiration date is calculated from the [store primary timezone](/admin/settings/general).",
@@ -1392,6 +1463,15 @@
         },
         "text": {
           "name": "Text"
+        },
+        "promotion": {
+          "name": "Promotion",
+          "discount_code": "Discount code",
+          "discount_code_info": "The message switches to its \"applied\" text while this code is applied to the cart.",
+          "text": "Text",
+          "text_info": "Shown when the discount code is not applied. Leave blank to only show a message once the code is applied.",
+          "applied_text": "Text when discount code is applied",
+          "applied_text_info": "Replaces the text above while the discount code is applied. Leave blank to keep showing the text above."
         },
         "collapsible_text": {
           "name": "Collapsible text",

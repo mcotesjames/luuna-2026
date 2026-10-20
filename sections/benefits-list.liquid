@@ -1,0 +1,625 @@
+{%- comment -%}
+  ------------------------------------------------------------------------------------------------------------------------
+  BENEFITS LIST
+
+  A card with a heading and a list of benefits (marked with numbers or icons) beside an image. The card takes the
+  section's color scheme, so it can sit as a panel on the page background.
+  ------------------------------------------------------------------------------------------------------------------------
+{%- endcomment -%}
+
+<style>
+  #shopify-section-{{ section.id }} .benefits-list {
+    display: grid;
+    gap: 2rem;
+    padding: 2rem 1.5rem;
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__content {
+    display: grid;
+    gap: 2rem;
+    align-content: center;
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__items {
+    display: grid;
+    gap: 1.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1rem;
+    row-gap: .375rem;
+    align-items: center;
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__marker {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--rounded-full);
+    background: rgb(var(--text-color));
+    color: rgb(var(--background));
+    font-size: var(--text-sm);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__marker--icon {
+    background: none;
+    color: rgb(var(--text-color));
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__text {
+    grid-column: 2;
+    opacity: .75;
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__media {
+    align-self: center;
+    overflow: hidden;
+    {%- if section.settings.image_aspect_ratio == 'fill' %}
+      aspect-ratio: 4 / 3;
+    {%- else %}
+      aspect-ratio: {{ section.settings.image_aspect_ratio }};
+    {%- endif %}
+  }
+
+  #shopify-section-{{ section.id }} .benefits-list__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .benefits-list {
+      padding: 3rem;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .benefits-list {
+      gap: 4rem;
+      padding: 2.5rem 2.5rem 2.5rem 5rem;
+    }
+
+    #shopify-section-{{ section.id }} .benefits-list--with-image {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    #shopify-section-{{ section.id }} .benefits-list--image-start {
+      padding: 2.5rem 5rem 2.5rem 2.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .benefits-list--image-start .benefits-list__media {
+      order: -1;
+    }
+
+    {%- if section.settings.image_aspect_ratio == 'fill' %}
+      /* Fill the full height of the card, whatever the content length */
+      #shopify-section-{{ section.id }} .benefits-list__media {
+        align-self: stretch;
+        aspect-ratio: auto;
+      }
+    {%- endif %}
+
+    #shopify-section-{{ section.id }} .benefits-list:not(.benefits-list--with-image) {
+      padding: 5rem;
+    }
+
+    #shopify-section-{{ section.id }} .benefits-list__content {
+      padding-block: 2.5rem;
+    }
+  }
+</style>
+
+{%- assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5 -%}
+
+<div class="section-spacing {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <div class="container">
+    <div class="benefits-list color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.image != blank %}benefits-list--with-image benefits-list--image-{{ section.settings.image_position }}{% endif %}">
+      <div class="benefits-list__content">
+        {%- render 'section-header',
+          subheading: section.settings.subheading,
+          heading: section.settings.title,
+          heading_style: section.settings.heading_style,
+          content: section.settings.content,
+          text_alignment: 'start'
+        -%}
+
+        {%- if section.blocks.size > 0 -%}
+          <ol class="benefits-list__items" role="list">
+            {%- for block in section.blocks -%}
+              <li class="benefits-list__item" {{ block.shopify_attributes }}>
+                {%- if section.settings.marker_style == 'icon' -%}
+                  <span class="benefits-list__marker benefits-list__marker--icon" aria-hidden="true">
+                    {%- render 'icon' with block.settings.icon, width: 28 -%}
+                  </span>
+                {%- else -%}
+                  <span class="benefits-list__marker" aria-hidden="true">{{ forloop.index }}.</span>
+                {%- endif -%}
+
+                {%- if block.settings.title != blank -%}
+                  <p class="h5">{{ block.settings.title }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.content != blank -%}
+                  <div class="benefits-list__text prose">
+                    {{- block.settings.content -}}
+                  </div>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ol>
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.image != blank -%}
+        {%- assign image_style = 'object-position: ' | append: section.settings.image.presentation.focal_point -%}
+
+        <div class="benefits-list__media">
+          {{- section.settings.image | image_url: width: section.settings.image.width | image_tag: sizes: '(max-width: 999px) 100vw, 50vw', widths: '400,600,800,1000,1200,1400,1600', style: image_style, loading: 'lazy' -}}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.benefits_list.name",
+  "class": "shopify-section--benefits-list",
+  "tag": "section",
+  "disabled_on": {
+    "groups": ["header", "custom.overlay"]
+  },
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "info": "t:sections.benefits_list.color_scheme_info",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:global.image.image"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:sections.benefits_list.image_position",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:sections.benefits_list.image_position_options.start"
+        },
+        {
+          "value": "end",
+          "label": "t:sections.benefits_list.image_position_options.end"
+        }
+      ],
+      "default": "end"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "t:sections.benefits_list.image_aspect_ratio",
+      "info": "t:sections.benefits_list.image_aspect_ratio_info",
+      "options": [
+        { "value": "1 / 1", "label": "t:sections.benefits_list.image_aspect_ratio_options.square" },
+        { "value": "4 / 5", "label": "t:sections.benefits_list.image_aspect_ratio_options.portrait_4_5" },
+        { "value": "3 / 4", "label": "t:sections.benefits_list.image_aspect_ratio_options.portrait_3_4" },
+        { "value": "2 / 3", "label": "t:sections.benefits_list.image_aspect_ratio_options.portrait_2_3" },
+        { "value": "4 / 3", "label": "t:sections.benefits_list.image_aspect_ratio_options.landscape_4_3" },
+        { "value": "3 / 2", "label": "t:sections.benefits_list.image_aspect_ratio_options.landscape_3_2" },
+        { "value": "16 / 9", "label": "t:sections.benefits_list.image_aspect_ratio_options.landscape_16_9" },
+        { "value": "fill", "label": "t:sections.benefits_list.image_aspect_ratio_options.fill" }
+      ],
+      "default": "4 / 5"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "t:global.text.subheading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:global.text.heading",
+      "default": "Why shop with us"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "t:global.text.style",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "t:global.text.content"
+    },
+    {
+      "type": "select",
+      "id": "marker_style",
+      "label": "t:sections.benefits_list.marker_style",
+      "options": [
+        {
+          "value": "number",
+          "label": "t:sections.benefits_list.marker_style_options.number"
+        },
+        {
+          "value": "icon",
+          "label": "t:sections.benefits_list.marker_style_options.icon"
+        }
+      ],
+      "default": "number"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "t:sections.benefits_list.blocks.item.name",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:global.icons.icon",
+          "options": [
+            {
+              "value": "picto-award-gift",
+              "label": "t:global.icons.award_gift",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-bag-handle",
+              "label": "t:global.icons.bag_handle",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-building",
+              "label": "t:global.icons.building",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-coupon",
+              "label": "t:global.icons.coupon",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-gift",
+              "label": "t:global.icons.gift",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-info",
+              "label": "t:global.icons.info",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-love",
+              "label": "t:global.icons.love",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-percent",
+              "label": "t:global.icons.percent",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-star",
+              "label": "t:global.icons.star",
+              "group": "t:global.icons.shop_category"
+            },
+            {
+              "value": "picto-box",
+              "label": "t:global.icons.box",
+              "group": "t:global.icons.shipping_category"
+            },
+            {
+              "value": "picto-delivery-truck",
+              "label": "t:global.icons.delivery_truck",
+              "group": "t:global.icons.shipping_category"
+            },
+            {
+              "value": "picto-pin",
+              "label": "t:global.icons.pin",
+              "group": "t:global.icons.shipping_category"
+            },
+            {
+              "value": "picto-plane",
+              "label": "t:global.icons.plane",
+              "group": "t:global.icons.shipping_category"
+            },
+            {
+              "value": "picto-return",
+              "label": "t:global.icons.return",
+              "group": "t:global.icons.shipping_category"
+            },
+            {
+              "value": "picto-credit-card",
+              "label": "t:global.icons.credit_card",
+              "group": "t:global.icons.payment_and_security_category"
+            },
+            {
+              "value": "picto-lock",
+              "label": "t:global.icons.lock",
+              "group": "t:global.icons.payment_and_security_category"
+            },
+            {
+              "value": "picto-money",
+              "label": "t:global.icons.money",
+              "group": "t:global.icons.payment_and_security_category"
+            },
+            {
+              "value": "picto-secure-profile",
+              "label": "t:global.icons.secure_profile",
+              "group": "t:global.icons.payment_and_security_category"
+            },
+            {
+              "value": "picto-shield",
+              "label": "t:global.icons.shield",
+              "group": "t:global.icons.payment_and_security_category"
+            },
+            {
+              "value": "picto-earth",
+              "label": "t:global.icons.earth",
+              "group": "t:global.icons.ecology_category"
+            },
+            {
+              "value": "picto-leaf",
+              "label": "t:global.icons.leaf",
+              "group": "t:global.icons.ecology_category"
+            },
+            {
+              "value": "picto-recycle",
+              "label": "t:global.icons.recycle",
+              "group": "t:global.icons.ecology_category"
+            },
+            {
+              "value": "picto-tree",
+              "label": "t:global.icons.tree",
+              "group": "t:global.icons.ecology_category"
+            },
+            {
+              "value": "picto-at-sign",
+              "label": "t:global.icons.at_sign",
+              "group": "t:global.icons.tech_category"
+            },
+            {
+              "value": "picto-bluetooth",
+              "label": "t:global.icons.bluetooth",
+              "group": "t:global.icons.tech_category"
+            },
+            {
+              "value": "picto-camera",
+              "label": "t:global.icons.camera",
+              "group": "t:global.icons.tech_category"
+            },
+            {
+              "value": "picto-printer",
+              "label": "t:global.icons.printer",
+              "group": "t:global.icons.tech_category"
+            },
+            {
+              "value": "picto-smart-watch",
+              "label": "t:global.icons.smart_watch",
+              "group": "t:global.icons.tech_category"
+            },
+            {
+              "value": "picto-wifi",
+              "label": "t:global.icons.wifi",
+              "group": "t:global.icons.tech_category"
+            },
+            {
+              "value": "picto-avatar",
+              "label": "t:global.icons.avatar",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-chat",
+              "label": "t:global.icons.chat",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-calendar",
+              "label": "t:global.icons.calendar",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-comment",
+              "label": "t:global.icons.comment",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-customer-support",
+              "label": "t:global.icons.customer_support",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-happy-face",
+              "label": "t:global.icons.happy_face",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-mailbox",
+              "label": "t:global.icons.mailbox",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-mobile-phone",
+              "label": "t:global.icons.mobile_phone",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-operator",
+              "label": "t:global.icons.operator",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-phone",
+              "label": "t:global.icons.phone",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-send",
+              "label": "t:global.icons.send",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-user",
+              "label": "t:global.icons.user",
+              "group": "t:global.icons.communication_category"
+            },
+            {
+              "value": "picto-burger",
+              "label": "t:global.icons.burger",
+              "group": "t:global.icons.food_category"
+            },
+            {
+              "value": "picto-beer",
+              "label": "t:global.icons.beer",
+              "group": "t:global.icons.food_category"
+            },
+            {
+              "value": "picto-coffee",
+              "label": "t:global.icons.coffee",
+              "group": "t:global.icons.food_category"
+            },
+            {
+              "value": "picto-pizza",
+              "label": "t:global.icons.pizza",
+              "group": "t:global.icons.food_category"
+            },
+            {
+              "value": "picto-bottle",
+              "label": "t:global.icons.bottle",
+              "group": "t:global.icons.food_category"
+            },
+            {
+              "value": "picto-document",
+              "label": "t:global.icons.document",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-error",
+              "label": "t:global.icons.error",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-file",
+              "label": "t:global.icons.file",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-jewelry",
+              "label": "t:global.icons.jewelry",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-mask",
+              "label": "t:global.icons.mask",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-music",
+              "label": "t:global.icons.music",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-not-allowed",
+              "label": "t:global.icons.not_allowed",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-target",
+              "label": "t:global.icons.target",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-timer",
+              "label": "t:global.icons.timer",
+              "group": "t:global.icons.other_category"
+            },
+            {
+              "value": "picto-success",
+              "label": "t:global.icons.success",
+              "group": "t:global.icons.other_category"
+            }
+          ],
+          "info": "t:sections.benefits_list.blocks.item.icon_info",
+          "default": "picto-success"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "title",
+          "label": "t:global.text.heading",
+          "default": "Benefit"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "t:global.text.content",
+          "default": "<p>Describe why this matters to your customers.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.benefits_list.presets.benefits_list.name",
+      "category": "t:global.categories.trust_social",
+      "blocks": [
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
