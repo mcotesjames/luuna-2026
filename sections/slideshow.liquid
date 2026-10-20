@@ -22,6 +22,11 @@
     }
   </style>
 
+  {%- if testimonial_blocks.size > 0 -%}
+    {{- 'testimonial-card.css' | asset_url | stylesheet_tag -}}
+    <script type="module" src="{{ 'slideshow-testimonials.js' | asset_url }}"></script>
+  {%- endif -%}
+
   {%- if section.settings.remove_slide_transition -%}
     <script type="module" src="{{ 'slideshow-no-transition.js' | asset_url }}"></script>
   {%- endif -%}
@@ -186,6 +191,30 @@
                 </div>
               {%- endif -%}
             </div>
+
+            {%- comment -%}
+              Testimonials are section-level blocks shown on every slide, inside the slide content so they sit in the
+              page flow and never cover the text. Editor attributes go on the first slide's copy only, so selecting a
+              testimonial block in the editor targets a single element.
+            {%- endcomment -%}
+            {%- if testimonial_blocks.size > 0 -%}
+              <slideshow-testimonials class="slideshow__testimonials" autoplay="3000">
+                {%- for testimonial in testimonial_blocks -%}
+                  {%- liquid
+                    assign is_selected = ''
+                    if forloop.first
+                      assign is_selected = 'is-selected'
+                    endif
+
+                    assign testimonial_attributes = ''
+                    if forloop.parentloop.first
+                      assign testimonial_attributes = testimonial.shopify_attributes
+                    endif
+                  -%}
+                  {%- render 'testimonial-card', rating: testimonial.settings.rating, quote: testimonial.settings.quote, author: testimonial.settings.author, color_scheme: testimonial.settings.color_scheme, class: is_selected, attributes: testimonial_attributes -%}
+                {%- endfor -%}
+              </slideshow-testimonials>
+            {%- endif -%}
           </div>
         </div>
 
@@ -261,25 +290,6 @@
     {%- endif -%}
   </slideshow-carousel>
 
-  {%- if testimonial_blocks.size > 0 -%}
-    {{- 'testimonial-card.css' | asset_url | stylesheet_tag -}}
-    <script type="module" src="{{ 'slideshow-testimonials.js' | asset_url }}"></script>
-
-    {%- comment -%}
-      Testimonials sit outside the carousel so it doesn't treat them as slides (swipes, editor block selection)
-    {%- endcomment -%}
-    <slideshow-testimonials class="slideshow__testimonials" autoplay="3000">
-      {%- for block in testimonial_blocks -%}
-        {%- liquid
-          assign is_selected = ''
-          if forloop.first
-            assign is_selected = 'is-selected'
-          endif
-        -%}
-        {%- render 'testimonial-card', rating: block.settings.rating, quote: block.settings.quote, author: block.settings.author, color_scheme: block.settings.color_scheme, class: is_selected, attributes: block.shopify_attributes -%}
-      {%- endfor -%}
-    </slideshow-testimonials>
-  {%- endif -%}
 {%- endif -%}
 
 {% schema %}

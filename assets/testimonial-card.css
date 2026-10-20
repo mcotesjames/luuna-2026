@@ -36,26 +36,44 @@
 }
 
 /*
-  Floating layer over the slideshow (sections/slideshow.liquid). It is rendered next to <slideshow-carousel> rather than
-  inside it, so the carousel doesn't treat the cards as slides (swipes, editor block selection).
-*/
+  Testimonials inside the slideshow (sections/slideshow.liquid). They sit in the slide content below the text and
+  buttons, so they are part of the page flow and the slide grows to fit them rather than being covered.
 
-.shopify-section--slideshow:has(> .slideshow__testimonials) {
-  position: relative;
-}
-
-/*
-  The cards are stacked on top of each other in the bottom left of the slideshow, and slideshow-testimonials.js fades
-  between them by moving the is-selected class. Stacking them in one grid cell makes the layer as tall as the tallest
-  card, so it doesn't jump in size between testimonials.
+  The cards are stacked on top of each other in one grid cell, and slideshow-testimonials.js fades between them by moving
+  the is-selected class. Stacking them in one cell makes the block as tall as the tallest card, so the slide doesn't jump
+  in size between testimonials.
 */
 .slideshow__testimonials {
-  position: absolute;
-  z-index: 1;
-  inset-block-end: var(--container-gutter);
-  inset-inline-start: var(--container-gutter);
-  width: min(22rem, 100% - var(--container-gutter) * 2);
   display: grid;
+  width: min(22rem, 100%);
+  margin-block-start: 1.5rem;
+}
+
+/* Follow the slide's text alignment (mobile_text_position / desktop_text_position) */
+.text-center .slideshow__testimonials {
+  margin-inline: auto;
+}
+
+.text-end .slideshow__testimonials {
+  margin-inline-start: auto;
+}
+
+@media screen and (min-width: 700px) {
+  .sm\:text-start .slideshow__testimonials {
+    margin-inline: 0 auto;
+  }
+
+  .sm\:text-center .slideshow__testimonials {
+    margin-inline: auto;
+  }
+
+  .sm\:text-end .slideshow__testimonials {
+    margin-inline: auto 0;
+  }
+
+  .slideshow__testimonials {
+    margin-block-start: 2rem;
+  }
 }
 
 .slideshow__testimonials > .testimonial-card {
@@ -66,18 +84,10 @@
   transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
 }
 
+/* inherit (not visible), so cards stay hidden inside slides the carousel has hidden with visibility: hidden */
 .slideshow__testimonials > .testimonial-card.is-selected {
   opacity: 1;
-  visibility: visible;
-}
-
-/* On mobile, the testimonials span the full width, above the slide dots and next section button */
-@media screen and (max-width: 699px) {
-  .slideshow__testimonials {
-    inset-block-end: calc(var(--container-gutter) + 3rem);
-    width: auto;
-    inset-inline-end: var(--container-gutter);
-  }
+  visibility: inherit;
 }
 
 /* Motion: the testimonials fade and rise in once the slideshow has loaded. Reduced motion swaps cards instantly. */
