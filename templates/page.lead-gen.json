@@ -40,6 +40,7 @@
         "color_scheme": "scheme-1",
         "separate_section_with_border": false,
         "image": "shopify://shop_images/hero.jpg",
+        "mobile_image": "shopify://shop_images/hero-mobile.jpg",
         "desktop_height": 680,
         "logo_width": 130,
         "subheading": "Limited-time offer",
