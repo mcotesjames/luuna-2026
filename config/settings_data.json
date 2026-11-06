@@ -27,8 +27,8 @@
     "button_text_transform": "normal",
     "button_letter_spacing": 18,
     "product_card_text_font": "heading",
-    "cart_show_free_shipping_bar": false,
-    "cart_free_shipping_threshold": "400",
+    "cart_show_free_shipping_bar": true,
+    "cart_free_shipping_threshold": "350",
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
