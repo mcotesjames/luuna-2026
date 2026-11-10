@@ -28,11 +28,27 @@
             "show_taxes_notice": false
           }
         },
-        "rating_nHcdCL": {
-          "type": "rating",
+        "promotion_xipXCj": {
+          "type": "promotion",
           "settings": {
-            "show_empty": true,
-            "rating_mode": "rating"
+            "discount_code": "FREESHIPPING2026",
+            "text": "Click <a href=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\" target=\"_blank\" title=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\">here</a> for free delivery on your next order",
+            "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
+          }
+        },
+        "payment_terms": {
+          "type": "payment_terms",
+          "settings": {}
+        },
+        "separator": {
+          "type": "separator",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapse_content": false,
+            "show_below_gallery": false
           }
         },
         "quantity_selector": {
@@ -43,67 +59,6 @@
           "type": "shopify://apps/recharge-subscriptions/blocks/subscription-widget-v2/371eed76-0b44-4869-9813-730372ea378e",
           "settings": {}
         },
-        "buy_buttons": {
-          "type": "buy_buttons",
-          "settings": {
-            "show_payment_button": true,
-            "show_gift_card_recipient": true,
-            "atc_button_background": "",
-            "atc_button_text_color": "",
-            "payment_button_background": "",
-            "payment_button_text_color": ""
-          }
-        },
-        "payment_terms": {
-          "type": "payment_terms",
-          "settings": {}
-        },
-        "separator": {
-          "type": "separator",
-          "disabled": true,
-          "settings": {}
-        },
-        "accordion_Uac3AR": {
-          "type": "accordion",
-          "settings": {
-            "show_below_gallery": false,
-            "icon": "none",
-            "title": "Description",
-            "content": "<p>Made with a 100% certified organic cotton topsheet and plastic-free wrappers, Luuna Care regular pads are designed for everyday comfort and sensitive skin. Organic cotton is soft, breathable, and free from synthetic materials, fragrances, and harmful pesticides.</p><p>Each pad is individually wrapped in plastic-free packaging, so your period care doesn't have to cost the earth.</p>",
-            "liquid": "",
-            "page": ""
-          }
-        },
-        "accordion_WekUA6": {
-          "type": "accordion",
-          "settings": {
-            "show_below_gallery": false,
-            "icon": "none",
-            "title": "Details",
-            "content": "<ul><li>30 pads per pack</li><li>24cm length</li><li>With wings</li><li>Regular absorbency</li></ul>",
-            "liquid": "",
-            "page": ""
-          }
-        },
-        "accordion_dtWTTT": {
-          "type": "accordion",
-          "settings": {
-            "show_below_gallery": false,
-            "icon": "none",
-            "title": "About The Brand",
-            "content": "<p>Built by award-winning social entrepreneur Olivia, who found that organic materials helped alleviate her recurring yeast infections, Luuna Care, our house brand, has provided safe, organic period care since 2019. For our own range, Luuna Care works with ethical production facilities across Asia and Europe to source healthy, organically-grown materials for our pad and tampon lines, packaging them in plastic-free wrappers and packaging to reduce plastic waste.</p>",
-            "liquid": "",
-            "page": ""
-          }
-        },
-        "promotion_xipXCj": {
-          "type": "promotion",
-          "settings": {
-            "discount_code": "FREESHIPPING2026",
-            "text": "Click <a href=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\" target=\"_blank\" title=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\">here</a> for free delivery on your next order",
-            "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
-          }
-        },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
@@ -113,6 +68,17 @@
             "variant_image_options": "",
             "variant_image_show_underline": false,
             "size_chart_page": ""
+          }
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": true,
+            "show_gift_card_recipient": true,
+            "atc_button_background": "",
+            "atc_button_text_color": "",
+            "payment_button_background": "",
+            "payment_button_text_color": ""
           }
         },
         "complementary_products": {
@@ -130,17 +96,14 @@
         "vendor",
         "title",
         "price",
-        "rating_nHcdCL",
-        "quantity_selector",
-        "recharge_subscriptions_subscription_widget_v2_D7yVF3",
-        "buy_buttons",
+        "promotion_xipXCj",
         "payment_terms",
         "separator",
-        "accordion_Uac3AR",
-        "accordion_WekUA6",
-        "accordion_dtWTTT",
-        "promotion_xipXCj",
+        "description",
+        "quantity_selector",
+        "recharge_subscriptions_subscription_widget_v2_D7yVF3",
         "variant_picker",
+        "buy_buttons",
         "complementary_products"
       ],
       "settings": {
