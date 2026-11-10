@@ -43,6 +43,62 @@
 
       <div class="quick-buy-modal__info-wrapper">
         {%- render 'product-info', product: product, product_form_id: product_form_id, context: 'quick_buy' -%}
+
+        {%- comment -%}
+          Quick buy only adds one-time purchases, so tell shoppers when subscriptions exist and link to the product page,
+          where the Purchase options block lets them subscribe. Copy comes from that block's settings.
+        {%- endcomment -%}
+        {%- liquid
+          assign has_selling_plans = false
+          for group in product.selling_plan_groups
+            if group.selling_plans.size > 0
+              assign has_selling_plans = true
+            endif
+          endfor
+        -%}
+
+        {%- if has_selling_plans -%}
+          {%- liquid
+            assign po_block = section.blocks | where: 'type', 'purchase_options' | first
+            assign notice_text = po_block.settings.quick_buy_notice | default: 'Subscribe & save [percent]% is available for this product.'
+            assign notice_link = po_block.settings.quick_buy_notice_link | default: 'View subscription options'
+
+            assign po_variant = product.selected_or_first_available_variant
+            assign po_alloc = po_variant.selling_plan_allocations | first
+            assign po_pct = 0
+            if po_alloc and po_variant.price > po_alloc.price
+              assign po_pct = po_variant.price | minus: po_alloc.price | times: 100.0 | divided_by: po_variant.price | round
+            endif
+
+            if po_pct == 0
+              assign notice_text = notice_text | replace: ' [percent]%', '' | replace: '[percent]%', ''
+            else
+              assign notice_text = notice_text | replace: '[percent]', po_pct
+            endif
+          -%}
+
+          <div class="quick-buy-subscription-notice">
+            <p>{{ notice_text }}</p>
+            <a href="{{ product.url }}" class="link">{{ notice_link }}</a>
+          </div>
+
+          <style>
+            .quick-buy-subscription-notice {
+              display: grid;
+              gap: 4px;
+              margin-block-start: 1.25rem;
+              padding: 12px 14px;
+              background: #fbf3dc;
+              border: 1px solid #d9d4c3;
+              border-radius: 4px;
+              color: #1c1c1c;
+              font-size: 13px;
+            }
+
+            .quick-buy-subscription-notice p { margin: 0; }
+            .quick-buy-subscription-notice .link { justify-self: start; font-weight: 700; }
+          </style>
+        {%- endif -%}
         <a href="{{ product.url }}" class="quick-buy-modal__view-more link sm-max:hidden">{{ 'product.general.view_details' | t }}</a>
       </div>
     </product-rerender>

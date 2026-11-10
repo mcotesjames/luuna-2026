@@ -116,7 +116,9 @@
 
               {%- case block.type -%}
                 {%- when 'description' -%}
-                  {%- if product.description != blank -%}
+                  {%- capture has_content -%}{%- render 'has-content', content: product.description -%}{%- endcapture -%}
+
+                  {%- if has_content == 'true' -%}
                     {%- if block.settings.collapse_content -%}
                       {%- assign accordion_title = 'product.general.description' | t -%}
                       {%- render 'accordion', title: accordion_title, content: product.description, prose_content: true, size: 'lg', block: block -%}
@@ -131,8 +133,11 @@
                   {%- liquid
                     assign accordion_title = block.settings.title | default: block.settings.page.title
                     assign accordion_content = block.settings.page.content | default: block.settings.liquid | default: block.settings.content
+                    capture has_content
+                      render 'has-content', content: accordion_content
+                    endcapture
 
-                    if accordion_title != blank and accordion_content != blank
+                    if accordion_title != blank and has_content == 'true'
                       render 'accordion', title: accordion_title, content: accordion_content, size: 'lg', prose_content: true, icon: block.settings.icon, custom_icon: block.settings.custom_icon, block: block
                     endif
                   -%}
@@ -771,6 +776,103 @@
         {
           "type": "paragraph",
           "content": "t:sections.main_product.blocks.quantity_selector.instructions"
+        }
+      ]
+    },
+    {
+      "type": "purchase_options",
+      "name": "Purchase options",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Subscribe & save / One-time purchase cards using the product's Recharge selling plans. Includes its own quantity, so remove the Quantity selector block. Keep the Buy buttons block directly below. Products without selling plans show one-time only."
+        },
+        {
+          "type": "text",
+          "id": "subscribe_title",
+          "label": "Subscribe title",
+          "default": "Subscribe & save"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge text",
+          "info": "[percent] is replaced with the saving from the selling plan",
+          "default": "Save [percent]%"
+        },
+        {
+          "type": "text",
+          "id": "frequency_label",
+          "label": "Frequency label",
+          "default": "Delivery frequency"
+        },
+        {
+          "type": "text",
+          "id": "chip_subtitle_1",
+          "label": "Frequency 1 subtitle",
+          "info": "Optional. Frequencies are sorted shortest first."
+        },
+        {
+          "type": "text",
+          "id": "chip_subtitle_2",
+          "label": "Frequency 2 subtitle"
+        },
+        {
+          "type": "text",
+          "id": "chip_subtitle_3",
+          "label": "Frequency 3 subtitle"
+        },
+        {
+          "type": "text",
+          "id": "subscribe_quantity_label",
+          "label": "Subscribe quantity label",
+          "default": "Packs per delivery"
+        },
+        {
+          "type": "text",
+          "id": "note",
+          "label": "Subscribe note",
+          "default": "Skip, pause or cancel anytime."
+        },
+        {
+          "type": "text",
+          "id": "onetime_title",
+          "label": "One-time title",
+          "default": "One-time purchase"
+        },
+        {
+          "type": "text",
+          "id": "onetime_quantity_label",
+          "label": "One-time quantity label",
+          "default": "Packs"
+        },
+        {
+          "type": "text",
+          "id": "unit_label",
+          "label": "Price unit",
+          "default": "per pack"
+        },
+        {
+          "type": "header",
+          "content": "Quick buy notice"
+        },
+        {
+          "type": "paragraph",
+          "content": "Shown in quick buy modals (e.g. from collection cards) for products with subscription plans, since quick buy only adds one-time purchases."
+        },
+        {
+          "type": "text",
+          "id": "quick_buy_notice",
+          "label": "Notice text",
+          "info": "[percent] is replaced with the subscription saving",
+          "default": "Subscribe & save [percent]% is available for this product."
+        },
+        {
+          "type": "text",
+          "id": "quick_buy_notice_link",
+          "label": "Link text",
+          "default": "View subscription options"
         }
       ]
     },

@@ -92,6 +92,16 @@
       .h1, .h2, .h3, .h4, .h5, .h6 {
         font-family: 'Adelia', serif;
       }
+
+      {%- if settings.always_show_quick_buy -%}
+        /* Product cards: keep the quick buy / add to cart button visible on desktop instead of revealing it on hover */
+        @media screen and (pointer: fine) {
+          .product-card__quick-add-button {
+            opacity: 1;
+            transform: none;
+          }
+        }
+      {%- endif -%}
     </style>
   </head>
 

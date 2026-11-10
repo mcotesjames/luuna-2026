@@ -649,6 +649,14 @@
       },
       {
         "type": "checkbox",
+        "id": "always_show_quick_buy",
+        "label": "Always show quick buy button",
+        "info": "Shows the button on desktop without hovering, so cards read as shoppable. It always shows on touch devices.",
+        "default": true,
+        "visible_if": "{{ settings.show_quick_buy }}"
+      },
+      {
+        "type": "checkbox",
         "id": "show_sold_out_badge",
         "label": "t:theme_settings.product_card.show_sold_out_badge",
         "default": true

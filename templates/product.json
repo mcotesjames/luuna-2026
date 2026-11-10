@@ -28,36 +28,12 @@
             "show_taxes_notice": false
           }
         },
-        "promotion_xipXCj": {
-          "type": "promotion",
+        "rating_a8tKD9": {
+          "type": "rating",
           "settings": {
-            "discount_code": "FREESHIPPING2026",
-            "text": "Click <a href=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\" target=\"_blank\" title=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\">here</a> for free delivery on your next order",
-            "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
+            "show_empty": true,
+            "rating_mode": "rating"
           }
-        },
-        "payment_terms": {
-          "type": "payment_terms",
-          "settings": {}
-        },
-        "separator": {
-          "type": "separator",
-          "settings": {}
-        },
-        "description": {
-          "type": "description",
-          "settings": {
-            "collapse_content": false,
-            "show_below_gallery": false
-          }
-        },
-        "quantity_selector": {
-          "type": "quantity_selector",
-          "settings": {}
-        },
-        "recharge_subscriptions_subscription_widget_v2_D7yVF3": {
-          "type": "shopify://apps/recharge-subscriptions/blocks/subscription-widget-v2/371eed76-0b44-4869-9813-730372ea378e",
-          "settings": {}
         },
         "variant_picker": {
           "type": "variant_picker",
@@ -70,15 +46,72 @@
             "size_chart_page": ""
           }
         },
+        "purchase_options": {
+          "type": "purchase_options",
+          "settings": {
+            "subscribe_title": "Subscribe & save",
+            "badge_text": "Save [percent]%",
+            "frequency_label": "Delivery frequency",
+            "chip_subtitle_1": "10% off",
+            "chip_subtitle_2": "10% off",
+            "chip_subtitle_3": "10% off",
+            "subscribe_quantity_label": "Packs per delivery",
+            "note": "Skip, pause or cancel anytime.",
+            "onetime_title": "One-time purchase",
+            "onetime_quantity_label": "Packs",
+            "unit_label": "per pack"
+          }
+        },
         "buy_buttons": {
           "type": "buy_buttons",
           "settings": {
-            "show_payment_button": true,
+            "show_payment_button": false,
             "show_gift_card_recipient": true,
             "atc_button_background": "",
             "atc_button_text_color": "",
             "payment_button_background": "",
             "payment_button_text_color": ""
+          }
+        },
+        "payment_terms": {
+          "type": "payment_terms",
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {
+            "collapse_content": true,
+            "show_below_gallery": false
+          }
+        },
+        "accordion_details": {
+          "type": "accordion",
+          "settings": {
+            "show_below_gallery": false,
+            "icon": "none",
+            "title": "Details",
+            "content": "{{ product.metafields.custom.details | metafield_tag }}",
+            "liquid": "",
+            "page": ""
+          }
+        },
+        "accordion_brand": {
+          "type": "accordion",
+          "settings": {
+            "show_below_gallery": false,
+            "icon": "none",
+            "title": "About the brand",
+            "content": "",
+            "liquid": "{%- assign vendor_handle = product.vendor | handle -%}{%- assign vendor_name = product.vendor | downcase | strip -%}{%- assign brand = metaobjects.brand[vendor_handle] -%}{%- if brand == blank -%}{%- for entry in metaobjects.brand.values -%}{%- assign entry_name = entry.name.value | default: entry.name | downcase | strip -%}{%- if entry_name == vendor_name -%}{%- assign brand = entry -%}{%- break -%}{%- endif -%}{%- endfor -%}{%- endif -%}{{- brand.about | metafield_tag -}}",
+            "page": ""
+          }
+        },
+        "promotion_xipXCj": {
+          "type": "promotion",
+          "settings": {
+            "discount_code": "FREESHIPPING2026",
+            "text": "Click <a href=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\" target=\"_blank\" title=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\">here</a> for free delivery on your next order",
+            "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
           }
         },
         "complementary_products": {
@@ -96,14 +129,15 @@
         "vendor",
         "title",
         "price",
-        "promotion_xipXCj",
-        "payment_terms",
-        "separator",
-        "description",
-        "quantity_selector",
-        "recharge_subscriptions_subscription_widget_v2_D7yVF3",
+        "rating_a8tKD9",
         "variant_picker",
+        "purchase_options",
         "buy_buttons",
+        "payment_terms",
+        "description",
+        "accordion_details",
+        "accordion_brand",
+        "promotion_xipXCj",
         "complementary_products"
       ],
       "settings": {
