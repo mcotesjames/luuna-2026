@@ -17,8 +17,8 @@
           "settings": {
             "image": "shopify://shop_images/Editorial_Fashion_Accessory_Brand_Banner_for_Shopify.png",
             "mobile_image": "shopify://shop_images/hero-01.png",
-            "subheading": "every purchase tackles period poverty in local communities",
-            "title": "discover hong kong's home for trusted period and PMS CARE",
+            "subheading": "Organic, leak-proof period care and PMS relief made for your body—with every purchase giving back to local communities.",
+            "title": "Feel better through every stage of your cycle.",
             "heading_style": "h1",
             "mobile_text_position": "place-self-center text-center",
             "desktop_text_position": "sm:place-self-center-start sm:text-start",
@@ -159,6 +159,83 @@
         "controls_color": "#ffffff"
       }
     },
+    "featured_collections_QEk63E": {
+      "type": "featured-collections",
+      "blocks": {
+        "collection_xEYCFj": {
+          "type": "collection",
+          "settings": {
+            "collection": "pads",
+            "products_count": 3,
+            "title": "",
+            "link_url": "",
+            "link_text": "Shop all"
+          }
+        },
+        "collection_PmTYgq": {
+          "type": "collection",
+          "settings": {
+            "collection": "tampons",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        },
+        "collection_BgXYeh": {
+          "type": "collection",
+          "settings": {
+            "collection": "bundles",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        },
+        "collection_ArkYEK": {
+          "type": "collection",
+          "settings": {
+            "collection": "reusables",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        },
+        "collection_Pr9YKr": {
+          "type": "collection",
+          "settings": {
+            "collection": "pms-support",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        }
+      },
+      "block_order": [
+        "collection_xEYCFj",
+        "collection_PmTYgq",
+        "collection_BgXYeh",
+        "collection_ArkYEK",
+        "collection_Pr9YKr"
+      ],
+      "name": "t:sections.featured_collections.presets.featured_collections.name",
+      "settings": {
+        "color_scheme": "scheme-cba999a8-6792-4baf-9daf-1ca099375a04",
+        "separate_section_with_border": false,
+        "hide_product_information": false,
+        "stack_products": true,
+        "products_per_row_mobile": "1",
+        "products_per_row_desktop": 3,
+        "horizontal_spacing_factor": 1,
+        "vertical_spacing_factor": 1,
+        "header_alignment": "center",
+        "heading_style": "h4",
+        "subheading": "SHOP BY COLLECTION",
+        "hide_collection_title": false
+      }
+    },
     "rich-text": {
       "type": "rich-text",
       "blocks": {
@@ -271,83 +348,6 @@
         "items_per_row": 4,
         "logo_item_background": "",
         "logo_item_border": ""
-      }
-    },
-    "featured_collections_QEk63E": {
-      "type": "featured-collections",
-      "blocks": {
-        "collection_xEYCFj": {
-          "type": "collection",
-          "settings": {
-            "collection": "pads",
-            "products_count": 3,
-            "title": "",
-            "link_url": "",
-            "link_text": "Shop all"
-          }
-        },
-        "collection_PmTYgq": {
-          "type": "collection",
-          "settings": {
-            "collection": "tampons",
-            "products_count": 8,
-            "title": "",
-            "link_url": "",
-            "link_text": "View all"
-          }
-        },
-        "collection_BgXYeh": {
-          "type": "collection",
-          "settings": {
-            "collection": "bundles",
-            "products_count": 8,
-            "title": "",
-            "link_url": "",
-            "link_text": "View all"
-          }
-        },
-        "collection_ArkYEK": {
-          "type": "collection",
-          "settings": {
-            "collection": "reusables",
-            "products_count": 8,
-            "title": "",
-            "link_url": "",
-            "link_text": "View all"
-          }
-        },
-        "collection_Pr9YKr": {
-          "type": "collection",
-          "settings": {
-            "collection": "pms-support",
-            "products_count": 8,
-            "title": "",
-            "link_url": "",
-            "link_text": "View all"
-          }
-        }
-      },
-      "block_order": [
-        "collection_xEYCFj",
-        "collection_PmTYgq",
-        "collection_BgXYeh",
-        "collection_ArkYEK",
-        "collection_Pr9YKr"
-      ],
-      "name": "t:sections.featured_collections.presets.featured_collections.name",
-      "settings": {
-        "color_scheme": "scheme-cba999a8-6792-4baf-9daf-1ca099375a04",
-        "separate_section_with_border": false,
-        "hide_product_information": false,
-        "stack_products": true,
-        "products_per_row_mobile": "1",
-        "products_per_row_desktop": 3,
-        "horizontal_spacing_factor": 1,
-        "vertical_spacing_factor": 1,
-        "header_alignment": "center",
-        "heading_style": "h4",
-        "subheading": "SHOP BY COLLECTION",
-        "hide_collection_title": false
       }
     },
     "countdown": {
@@ -940,7 +940,7 @@
       ],
       "name": "t:sections.testimonials.presets.testimonials.name",
       "settings": {
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-3",
         "separate_section_with_border": false,
         "auto_rotate_between_testimonials": true,
         "cycle_speed": 5,
@@ -1112,9 +1112,9 @@
   },
   "order": [
     "slideshow",
+    "featured_collections_QEk63E",
     "rich-text",
     "logo_list_AJNTbL",
-    "featured_collections_QEk63E",
     "countdown",
     "image-with-text-overlay-2",
     "scrolling_content_3V8txy",

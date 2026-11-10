@@ -1,0 +1,20 @@
+{%- doc -%}
+  Outputs "true" when HTML content has visible text or media, nothing otherwise. Catches content that is not blank
+  but looks empty, such as "<p></p>" or "<p>&nbsp;</p>" left behind by the rich text editor or a cleared metafield.
+
+  Usage:
+    {%- capture has_content -%}{%- render 'has-content', content: some_html -%}{%- endcapture -%}
+    {%- if has_content == 'true' -%} ... {%- endif -%}
+
+  @param {string} content - the HTML to check
+{%- enddoc -%}
+
+{%- liquid
+  assign text = content | strip_html | replace: '&nbsp;', '' | replace: ' ', '' | strip
+
+  if text != blank
+    echo 'true'
+  elsif content contains '<img' or content contains '<iframe' or content contains '<video'
+    echo 'true'
+  endif
+-%}

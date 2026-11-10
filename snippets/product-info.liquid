@@ -207,7 +207,9 @@
               {%- assign product_description = product.description -%}
             {%- endif -%}
 
-            {%- if product_description != blank -%}
+            {%- capture has_content -%}{%- render 'has-content', content: product_description -%}{%- endcapture -%}
+
+            {%- if has_content == 'true' -%}
               {%- if block.settings.collapse_content -%}
                 {%- assign accordion_title = 'product.general.description' | t -%}
                 {%- render 'accordion', title: accordion_title, content: product_description, prose_content: true, block: block -%}
@@ -387,6 +389,11 @@
                 low_threshold: block.settings.low_inventory_threshold
             -%}
 
+          {%- when 'purchase_options' -%}
+            {%- if product != blank -%}
+              {%- render 'purchase-options', product: product, block: block, product_form_id: product_form_id -%}
+            {%- endif -%}
+
           {%- when 'buy_buttons' -%}
             {%- render 'buy-buttons',
                 product: product,
@@ -475,8 +482,11 @@
             {%- liquid
               assign accordion_title = block.settings.title | default: block.settings.page.title
               assign accordion_content = block.settings.page.content | default: block.settings.liquid | default: block.settings.content
+              capture has_content
+                render 'has-content', content: accordion_content
+              endcapture
 
-              if accordion_title != blank and accordion_content != blank
+              if accordion_title != blank and has_content == 'true'
                 render 'accordion', title: accordion_title, content: accordion_content, prose_content: true, icon: block.settings.icon, custom_icon: block.settings.custom_icon, block: block
               endif
             -%}

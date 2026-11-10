@@ -1,0 +1,269 @@
+/* Purchase options (Subscribe & save / One-time purchase) — see snippets/purchase-options.liquid */
+
+.po {
+  --po-ink: #1c1c1c;
+  --po-muted: #6b665a;
+  --po-border: #d9d4c3;
+  --po-row-border: #e6e1d0;
+  --po-open-bg: #fbf3dc;
+  --po-brown: #433930;
+  --po-cream: #fbedca;
+  --po-white: #ffffff;
+
+  display: block;
+  font-family: var(--text-font-family);
+  color: var(--po-ink);
+}
+
+.po__fieldset {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+/* ---------- Card ---------- */
+
+.po-card {
+  background: var(--po-white);
+  border: 1px solid var(--po-border);
+  border-radius: 6px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.po-card[hidden] { display: none; }
+
+.po-card.is-open {
+  background: var(--po-open-bg);
+  border-color: var(--po-ink);
+}
+
+.po-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  cursor: pointer;
+}
+
+.po-card[data-po-solo] .po-card__header { cursor: default; }
+.po-card[data-po-solo] .po-radio { display: none; }
+
+.po-card__main {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.po-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.po-card__title {
+  font-family: 'Adelia', serif;
+  font-size: 15px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 2.7px;
+}
+
+.po-badge {
+  background: var(--po-brown);
+  color: var(--po-cream);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 6px;
+  border-radius: 2px;
+}
+
+.po-badge[hidden] { display: none; }
+
+/* ---------- Prices ---------- */
+
+.po-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.po-price__current { font-size: 14px; font-weight: 700; }
+.po-price__compare { font-size: 13px; color: var(--po-muted); }
+.po-price__compare[hidden] { display: none; }
+.po-price__unit { font-size: 12px; color: var(--po-muted); }
+
+/* ---------- Radio ---------- */
+
+.po-radio {
+  appearance: none;
+  flex: none;
+  display: grid;
+  place-content: center;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  border: 1.5px solid var(--po-ink);
+  border-radius: 50%;
+  background: var(--po-white);
+  cursor: pointer;
+}
+
+.po-radio::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--po-ink);
+  transform: scale(0);
+  transition: transform 0.15s ease;
+}
+
+.po-radio:checked::before { transform: scale(1); }
+
+.po-radio:focus-visible,
+.po-chip:focus-visible,
+.po-stepper__btn:focus-visible {
+  outline: 2px solid var(--po-ink);
+  outline-offset: 2px;
+}
+
+/* ---------- Expand / collapse ---------- */
+
+.po-card__body {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows 0.25s ease, opacity 0.2s ease;
+}
+
+.po-card.is-open .po-card__body {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.po-card__inner {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.po-card.is-open .po-card__inner { padding-bottom: 20px; }
+
+/* ---------- Labels / note ---------- */
+
+.po-label {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.po-chips + .po-label { margin-top: 16px; }
+
+.po-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: var(--po-muted);
+}
+
+/* ---------- Frequency chips ---------- */
+
+.po-chips {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 8px;
+}
+
+.po-chip {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 10px 8px;
+  background: var(--po-white);
+  border: 1px solid var(--po-border);
+  border-radius: 4px;
+  color: var(--po-ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.po-chip[hidden] { display: none; }
+
+.po-chip[aria-checked='true'] {
+  border: 1.5px solid var(--po-ink);
+  padding: 9.5px 7.5px;
+}
+
+.po-chip__title { font-size: 13px; font-weight: 700; line-height: 1.25; }
+.po-chip__sub { font-size: 11px; color: var(--po-muted); line-height: 1.25; }
+.po-chip__sub[hidden] { display: none; }
+
+/* ---------- Product row + stepper ---------- */
+
+.po-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--po-white);
+  border: 1px solid var(--po-row-border);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Product titles are long ("Luuna Care | 24cm Organic Cotton Pads - 30 Pack"), so the price sits under the name */
+.po-row__info {
+  display: grid;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.4;
+}
+
+.po-row__price { font-weight: 700; white-space: nowrap; }
+
+.po-stepper {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.po-stepper__btn {
+  display: grid;
+  place-content: center;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--po-ink);
+  cursor: pointer;
+}
+
+.po-stepper__btn svg { width: 14px; height: 14px; }
+.po-stepper__btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.po-stepper__value {
+  min-width: 1ch;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Buy buttons while subscribing ---------- */
+
+/* Express checkout can't reliably carry a selling plan, so only offer it for one-time purchases */
+form[data-po-type='subscription'] .shopify-payment-button { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .po-card,
+  .po-card__body,
+  .po-radio::before { transition: none; }
+}

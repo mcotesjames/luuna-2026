@@ -1,0 +1,174 @@
+{%- doc -%}
+  Purchase options module (Subscribe & save / One-time purchase) built on Shopify selling plans created by Recharge.
+  Writes `quantity` and `selling_plan` into the product form through the `form` attribute, so the theme's existing
+  <product-form> add to cart flow and the sticky bar submit the selected options.
+
+  @param {object} product - the product
+  @param {object} block - the purchase_options block (copy settings)
+  @param {string} product_form_id - the ID of the product form
+{%- enddoc -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign bs = block.settings
+
+  assign has_subscription = false
+  for group in product.selling_plan_groups
+    if group.selling_plans.size > 0
+      assign has_subscription = true
+    endif
+  endfor
+
+  assign show_onetime = true
+  assign default_type = 'onetime'
+  if has_subscription and product.requires_selling_plan
+    assign show_onetime = false
+    assign default_type = 'subscription'
+  endif
+
+  assign first_alloc = variant.selling_plan_allocations | first
+  assign save_pct = 0
+  if first_alloc and variant.price > first_alloc.price
+    assign save_pct = variant.price | minus: first_alloc.price | times: 100.0 | divided_by: variant.price | round
+  endif
+
+  assign add_label = 'product.general.add_to_cart_button' | t
+  assign uid = product.id | append: '-' | append: block.id
+-%}
+
+{{ 'purchase-options.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'purchase-options.js' | asset_url }}" type="module"></script>
+
+<purchase-options
+  class="po"
+  form="{{ product_form_id }}"
+  data-default-type="{{ default_type }}"
+  data-add-label="{{ add_label | escape }}"
+  data-badge-template="{{ bs.badge_text | escape }}"
+>
+  <script type="application/json" data-po-data>
+    {
+      "variants": {
+        {%- for v in product.variants -%}
+          "{{ v.id }}": {
+            "price": {{ v.price }},
+            "available": {{ v.available | json }},
+            "max": {% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity | at_least: 0 }}{% else %}null{% endif %},
+            "plans": {
+              {%- for a in v.selling_plan_allocations -%}
+                "{{ a.selling_plan.id }}": {{ a.price }}{% unless forloop.last %},{% endunless %}
+              {%- endfor -%}
+            }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      },
+      "subtitles": [{{ bs.chip_subtitle_1 | json }}, {{ bs.chip_subtitle_2 | json }}, {{ bs.chip_subtitle_3 | json }}]
+    }
+  </script>
+
+  <fieldset class="po__fieldset">
+    <legend class="sr-only">Purchase options</legend>
+
+    {%- if has_subscription -%}
+      <div class="po-card" data-po-card="subscription" {% if variant.selling_plan_allocations.size == 0 %}hidden{% endif %}>
+        <label class="po-card__header">
+          <span class="po-card__main">
+            <span class="po-card__heading">
+              <span class="po-card__title">{{ bs.subscribe_title }}</span>
+              <span class="po-badge" data-po-badge {% if save_pct == 0 %}hidden{% endif %}>
+                {{- bs.badge_text | replace: '[percent]', save_pct -}}
+              </span>
+            </span>
+            <span class="po-price">
+              <strong class="po-price__current" data-po-sub-price>{{ first_alloc.price | money }}</strong>
+              <s class="po-price__compare" data-po-sub-compare {% if save_pct == 0 %}hidden{% endif %}>
+                <span class="sr-only">{{ 'product.price.regular_price' | t }}</span>
+                <span data-po-compare-value>{{ variant.price | money }}</span>
+              </s>
+              <span class="po-price__unit">{{ bs.unit_label }}</span>
+            </span>
+          </span>
+          <input class="po-radio" type="radio" name="po-type-{{ uid }}" value="subscription" {% if default_type == 'subscription' %}checked{% endif %}>
+        </label>
+
+        <div class="po-card__body" data-po-body>
+          <div class="po-card__inner">
+            <p class="po-label" id="po-freq-{{ uid }}">{{ bs.frequency_label }}</p>
+            <div class="po-chips" role="radiogroup" aria-labelledby="po-freq-{{ uid }}" data-po-chips>
+              {%- for group in product.selling_plan_groups -%}
+                {%- for plan in group.selling_plans -%}
+                  {%- assign option_text = plan.options | map: 'value' | join: ' ' -%}
+                  <button
+                    type="button"
+                    class="po-chip"
+                    role="radio"
+                    aria-checked="false"
+                    tabindex="-1"
+                    data-plan-id="{{ plan.id }}"
+                    data-plan-source="{{ option_text | append: ' ' | append: plan.name | escape }}"
+                  >
+                    <span class="po-chip__title" data-po-chip-title>{{ plan.name }}</span>
+                    <span class="po-chip__sub" data-po-chip-sub hidden></span>
+                  </button>
+                {%- endfor -%}
+              {%- endfor -%}
+            </div>
+
+            <p class="po-label">{{ bs.subscribe_quantity_label }}</p>
+            <div data-po-row-slot="subscription"></div>
+
+            {%- if bs.note != blank -%}
+              <p class="po-note">{{ bs.note }}</p>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if show_onetime -%}
+      <div class="po-card" data-po-card="onetime" {% unless has_subscription %}data-po-solo{% endunless %}>
+        <label class="po-card__header">
+          <span class="po-card__main">
+            <span class="po-card__heading">
+              <span class="po-card__title">{{ bs.onetime_title }}</span>
+            </span>
+            <span class="po-price">
+              <strong class="po-price__current" data-po-onetime-price>{{ variant.price | money }}</strong>
+              <span class="po-price__unit">{{ bs.unit_label }}</span>
+            </span>
+          </span>
+          <input class="po-radio" type="radio" name="po-type-{{ uid }}" value="onetime" {% if default_type == 'onetime' %}checked{% endif %}>
+        </label>
+
+        <div class="po-card__body" data-po-body>
+          <div class="po-card__inner">
+            <p class="po-label">{{ bs.onetime_quantity_label }}</p>
+            <div data-po-row-slot="onetime"></div>
+          </div>
+        </div>
+      </div>
+    {%- endif -%}
+  </fieldset>
+
+  {%- comment -%}Single product row, moved by JS into whichever card is open{%- endcomment -%}
+  <template data-po-row-template>
+    <div class="po-row">
+      <span class="po-row__info">
+        <span class="po-row__name">{{ product.title }}</span>
+        <span class="po-row__price" data-po-row-price></span>
+      </span>
+      <div class="po-stepper">
+        <button type="button" class="po-stepper__btn" data-po-step="-1" aria-label="{{ 'product.quantity.decrease_quantity' | t | escape }}">
+          {%- render 'icon' with 'minus', width: 14 -%}
+        </button>
+        <span class="po-stepper__value" data-po-qty aria-live="polite">1</span>
+        <button type="button" class="po-stepper__btn" data-po-step="1" aria-label="{{ 'product.quantity.increase_quantity' | t | escape }}">
+          {%- render 'icon' with 'plus', width: 14 -%}
+        </button>
+      </div>
+    </div>
+  </template>
+
+  <input type="hidden" name="quantity" value="1" form="{{ product_form_id }}" data-po-quantity-input>
+  <input type="hidden" name="selling_plan" value="" form="{{ product_form_id }}" data-po-plan-input disabled>
+</purchase-options>
