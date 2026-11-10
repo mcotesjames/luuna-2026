@@ -30,8 +30,8 @@
         "message_AzFQgf": {
           "type": "message",
           "settings": {
-            "text": "Click <a href=\"/pages/luuna-care-free-shipping-on-your-next-order\" target=\"_blank\" title=\"LUUNA Care | Free shipping on your next order\">here</a> for free delivery on your next order",
-            "applied_text": "FREESHIPPING applied. Free delivery will show at checkout"
+            "text": "Spend more than $HK350 for free delivery",
+            "applied_text": ""
           }
         }
       },
@@ -46,7 +46,7 @@
         "cycle_speed": 5,
         "desktop_font_size": 11,
         "mobile_font_size": 10,
-        "discount_code": "FREESHIPPING2026"
+        "discount_code": ""
       }
     },
     "header": {

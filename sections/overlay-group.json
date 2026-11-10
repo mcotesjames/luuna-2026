@@ -21,9 +21,9 @@
         "show_view_cart_button": true,
         "show_checkout_button": true,
         "show_price_in_checkout_button": true,
-        "discount_message_code": "FREESHIPPING2026",
-        "discount_message_text": "Click <a href=\"/pages/luuna-care-free-shipping-on-your-next-order\" target=\"_blank\" title=\"LUUNA Care | Free shipping on your next order\">here</a> for free delivery on your next order",
-        "discount_message_applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout",
+        "discount_message_code": "",
+        "discount_message_text": "",
+        "discount_message_applied_text": "",
         "cross_sell_products": [
           "the-oh-collective-gentle-period-tea-cube-10-cubes",
           "period-underwear",
