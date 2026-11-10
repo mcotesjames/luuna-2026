@@ -102,8 +102,11 @@
             "icon": "none",
             "title": "About the brand",
             "content": "",
-            "liquid": "{%- assign vendor_handle = product.vendor | handle -%}{%- assign vendor_name = product.vendor | downcase | strip -%}{%- assign brand = metaobjects.brand[vendor_handle] -%}{%- if brand == blank -%}{%- for entry in metaobjects.brand.values -%}{%- assign entry_name = entry.name.value | default: entry.name | downcase | strip -%}{%- if entry_name == vendor_name -%}{%- assign brand = entry -%}{%- break -%}{%- endif -%}{%- endfor -%}{%- endif -%}{{- brand.about | metafield_tag -}}",
-            "page": ""
+            "liquid": "",
+            "page": "",
+            "content_source": "brands",
+            "title_plural": "About the brands",
+            "show_brand_names": true
           }
         },
         "promotion_xipXCj": {

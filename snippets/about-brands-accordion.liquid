@@ -1,0 +1,120 @@
+{%- doc -%}
+  Renders an "About the brand(s)" accordion from Brand metaobjects (type `brand`, fields `name` and `about`).
+
+  Which brands:
+    1. The product's `custom.brands` metafield (list of Brand entries), used for bundles with several brands.
+    2. Otherwise the Brand entry matching the product's vendor, by handle ("Luuna Care" → luuna-care), then by name.
+
+  Brands with an empty About are skipped. Nothing is rendered when no brand has an About.
+
+  @param {object} product - the product
+  @param {object} block - the accordion block (title, title_plural, show_brand_names, icon)
+  @param {string} [size] - accordion size passed to the accordion snippet
+{%- enddoc -%}
+
+{%- liquid
+  assign brand_list = product.metafields.custom.brands.value
+  assign vendor_brand = blank
+
+  if brand_list == blank
+    assign vendor_handle = product.vendor | handle
+    assign vendor_name = product.vendor | downcase | strip
+    assign vendor_brand = metaobjects.brand[vendor_handle]
+
+    if vendor_brand == blank
+      for entry in metaobjects.brand.values
+        assign entry_name = entry.name.value | default: entry.name | downcase | strip
+        if entry_name == vendor_name
+          assign vendor_brand = entry
+          break
+        endif
+      endfor
+    endif
+  endif
+
+  # First pass: count the brands that have About content and collect their names for the title
+  assign brand_count = 0
+  assign brand_names = ''
+
+  if brand_list != blank
+    for brand in brand_list
+      assign about_html = brand.about | metafield_tag
+      capture has_about
+        render 'has-content', content: about_html
+      endcapture
+      if has_about == 'true'
+        assign brand_count = brand_count | plus: 1
+        assign brand_name = brand.name.value | default: brand.name
+        if brand_names == blank
+          assign brand_names = brand_name
+        else
+          assign brand_names = brand_names | append: ', ' | append: brand_name
+        endif
+      endif
+    endfor
+  elsif vendor_brand != blank
+    assign about_html = vendor_brand.about | metafield_tag
+    capture has_about
+      render 'has-content', content: about_html
+    endcapture
+    if has_about == 'true'
+      assign brand_count = 1
+      assign brand_names = vendor_brand.name.value | default: vendor_brand.name | default: product.vendor
+    endif
+  endif
+-%}
+
+{%- if brand_count > 0 -%}
+  {%- liquid
+    if brand_count > 1
+      assign accordion_title = block.settings.title_plural | default: block.settings.title
+    else
+      assign accordion_title = block.settings.title
+    endif
+
+    if block.settings.show_brand_names and brand_names != blank
+      assign accordion_title = accordion_title | append: ' — ' | append: brand_names
+    endif
+  -%}
+
+  {%- capture brands_content -%}
+    <div class="about-brands">
+      {%- if brand_list != blank -%}
+        {%- for brand in brand_list -%}
+          {%- assign about_html = brand.about | metafield_tag -%}
+          {%- capture has_about -%}{%- render 'has-content', content: about_html -%}{%- endcapture -%}
+
+          {%- if has_about == 'true' -%}
+            <div class="about-brands__item">
+              {%- if brand_count > 1 -%}
+                <p class="about-brands__name">{{ brand.name.value | default: brand.name }}</p>
+              {%- endif -%}
+              {{- about_html -}}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        <div class="about-brands__item">
+          {{- vendor_brand.about | metafield_tag -}}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <style>
+      .about-brands { display: grid; gap: 1.5rem; }
+      .about-brands__item > :first-child { margin-block-start: 0; }
+      .about-brands__item > :last-child { margin-block-end: 0; }
+      .about-brands__name { font-weight: 700; margin-block-end: 0.5rem; }
+    </style>
+  {%- endcapture -%}
+
+  {%- render 'accordion',
+    title: accordion_title,
+    content: brands_content,
+    size: size,
+    prose_content: true,
+    icon: block.settings.icon,
+    custom_icon: block.settings.custom_icon,
+    block: block
+  -%}
+{%- endif -%}
