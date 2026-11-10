@@ -131,6 +131,11 @@
 
                 {%- when 'accordion' -%}
                   {%- liquid
+                    if block.settings.content_source == 'brands'
+                      render 'about-brands-accordion', product: product, block: block, size: 'lg'
+                      continue
+                    endif
+
                     assign accordion_title = block.settings.title | default: block.settings.page.title
                     assign accordion_content = block.settings.page.content | default: block.settings.liquid | default: block.settings.content
                     capture has_content
@@ -1783,22 +1788,50 @@
           "info": "t:global.icons.custom_icon_info"
         },
         {
+          "type": "select",
+          "id": "content_source",
+          "label": "Content source",
+          "options": [
+            { "value": "manual", "label": "Content below" },
+            { "value": "brands", "label": "Brands (About from Brand metaobjects)" }
+          ],
+          "default": "manual",
+          "info": "Brands uses the product's Brands metafield (custom.brands), or the Brand entry matching the vendor. Hidden when no brand has an About."
+        },
+        {
           "type": "inline_richtext",
           "id": "title",
           "label": "t:global.text.title",
           "default": "Title"
         },
         {
+          "type": "text",
+          "id": "title_plural",
+          "label": "Title with several brands",
+          "default": "About the brands",
+          "visible_if": "{{ block.settings.content_source == 'brands' }}"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_brand_names",
+          "label": "Show brand names in title",
+          "info": "E.g. About the brand — TSUNO",
+          "default": true,
+          "visible_if": "{{ block.settings.content_source == 'brands' }}"
+        },
+        {
           "type": "richtext",
           "id": "content",
           "label": "t:global.text.content",
-          "default": "<p>Share some content to your customers about your products.</p>"
+          "default": "<p>Share some content to your customers about your products.</p>",
+          "visible_if": "{{ block.settings.content_source != 'brands' }}"
         },
         {
           "type": "liquid",
           "id": "liquid",
           "label": "t:global.code.liquid",
-          "info": "t:sections.main_product.blocks.collapsible_text.liquid_info"
+          "info": "t:sections.main_product.blocks.collapsible_text.liquid_info",
+          "visible_if": "{{ block.settings.content_source != 'brands' }}"
         },
         {
           "type": "page",

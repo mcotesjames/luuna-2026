@@ -121,7 +121,20 @@
             {%- render block -%}
 
           {%- when 'vendor' -%}
-            {%- if product != blank -%}
+            {%- assign vendor_brands = product.metafields.custom.brands.value -%}
+
+            {%- if product != blank and vendor_brands.size > 1 -%}
+              {%- comment -%}Bundles: list every brand from the Brands metafield, each linking to its vendor collection{%- endcomment -%}
+              <p class="vendor-list h6">
+                {%- for brand in vendor_brands -%}
+                  {%- assign brand_name = brand.name.value | default: brand.name -%}
+                  {%- if brand_name != blank -%}
+                    {%- unless forloop.first -%}<span class="vendor-list__separator">, </span>{%- endunless -%}
+                    {%- render 'vendor' with brand_name, class: 'link-faded' -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              </p>
+            {%- elsif product != blank -%}
               {%- render 'vendor' with product.vendor, class: 'h6 link-faded' -%}
             {%- else -%}
               {%- assign placeholder_vendor = 'general.on_boarding.product_vendor' | t -%}
@@ -479,17 +492,21 @@
             -%}
 
           {%- when 'accordion' -%}
-            {%- liquid
-              assign accordion_title = block.settings.title | default: block.settings.page.title
-              assign accordion_content = block.settings.page.content | default: block.settings.liquid | default: block.settings.content
-              capture has_content
-                render 'has-content', content: accordion_content
-              endcapture
+            {%- if block.settings.content_source == 'brands' -%}
+              {%- render 'about-brands-accordion', product: product, block: block -%}
+            {%- else -%}
+              {%- liquid
+                assign accordion_title = block.settings.title | default: block.settings.page.title
+                assign accordion_content = block.settings.page.content | default: block.settings.liquid | default: block.settings.content
+                capture has_content
+                  render 'has-content', content: accordion_content
+                endcapture
 
-              if accordion_title != blank and has_content == 'true'
-                render 'accordion', title: accordion_title, content: accordion_content, prose_content: true, icon: block.settings.icon, custom_icon: block.settings.custom_icon, block: block
-              endif
-            -%}
+                if accordion_title != blank and has_content == 'true'
+                  render 'accordion', title: accordion_title, content: accordion_content, prose_content: true, icon: block.settings.icon, custom_icon: block.settings.custom_icon, block: block
+                endif
+              -%}
+            {%- endif -%}
           
           {%- when 'disclosures' -%}
             {%- if product != blank -%}
