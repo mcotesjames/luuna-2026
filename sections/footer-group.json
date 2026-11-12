@@ -109,6 +109,15 @@
             "menu_title": ""
           }
         },
+        "links_LLP8MF": {
+          "type": "links",
+          "settings": {
+            "menu": "legal",
+            "collapse_on_mobile": false,
+            "show_menu_title": true,
+            "menu_title": ""
+          }
+        },
         "newsletter": {
           "type": "newsletter",
           "settings": {
@@ -124,6 +133,7 @@
         "links",
         "links_gfpeJe",
         "links_jMLz9w",
+        "links_LLP8MF",
         "newsletter"
       ],
       "settings": {
