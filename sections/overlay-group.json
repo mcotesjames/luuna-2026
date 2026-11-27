@@ -22,7 +22,7 @@
         "show_icon": true,
         "animate": true,
         "message_away": "You're [amount] away from free shipping 📦",
-        "message_cart_reached": "Your order qualifies for <strong>free shipping</strong>",
+        "message_cart_reached": "Your order qualifies for <strong>free shipping! </strong>🎉",
         "fill_color": "",
         "track_color": "",
         "text_color": "",

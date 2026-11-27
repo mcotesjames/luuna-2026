@@ -35,6 +35,20 @@
             "rating_mode": "rating"
           }
         },
+        "free_shipping_progress": {
+          "type": "free_shipping_progress",
+          "settings": {
+            "style": "minimal",
+            "show_icon": true,
+            "animate": true,
+            "message_away": "You're [amount] away from free shipping 📦",
+            "message_cart_reached": "Your order qualifies for <strong>free shipping! </strong>🎉",
+            "fill_color": "",
+            "track_color": "",
+            "text_color": "",
+            "background_color": ""
+          }
+        },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
@@ -60,7 +74,10 @@
             "note": "Skip, pause or cancel anytime.",
             "onetime_title": "One-time purchase",
             "onetime_quantity_label": "Packs",
-            "unit_label": "per pack"
+            "unit_label": "per pack",
+            "empty_button_label": "Select quantity",
+            "quick_buy_notice": "Subscribe & save [percent]% is available for this product.",
+            "quick_buy_notice_link": "View subscription options"
           }
         },
         "buy_buttons": {
@@ -72,6 +89,17 @@
             "atc_button_text_color": "",
             "payment_button_background": "",
             "payment_button_text_color": ""
+          }
+        },
+        "bundle_upsell": {
+          "type": "bundle_upsell",
+          "settings": {
+            "style": "outline",
+            "max_bundles": "1",
+            "heading": "Bundle & save",
+            "badge_text": "Save [saving]",
+            "saving_format": "percentage",
+            "cta_label": "View bundle"
           }
         },
         "payment_terms": {
@@ -90,7 +118,10 @@
           "settings": {
             "show_below_gallery": false,
             "icon": "none",
+            "content_source": "manual",
             "title": "Details",
+            "title_plural": "About the brands",
+            "show_brand_names": true,
             "content": "{{ product.metafields.custom.details | metafield_tag }}",
             "liquid": "",
             "page": ""
@@ -101,13 +132,13 @@
           "settings": {
             "show_below_gallery": false,
             "icon": "none",
+            "content_source": "brands",
             "title": "About the brand",
+            "title_plural": "About the brands",
+            "show_brand_names": true,
             "content": "",
             "liquid": "",
-            "page": "",
-            "content_source": "brands",
-            "title_plural": "About the brands",
-            "show_brand_names": true
+            "page": ""
           }
         },
         "promotion_xipXCj": {
@@ -116,27 +147,6 @@
             "discount_code": "FREESHIPPING2026",
             "text": "Click <a href=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\" target=\"_blank\" title=\"https://luna-wfnd7z.myklpages.com/l/VXZruB\">here</a> for free delivery on your next order",
             "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
-          }
-        },
-        "free_shipping_progress": {
-          "type": "free_shipping_progress",
-          "settings": {
-            "style": "minimal",
-            "show_icon": true,
-            "animate": true,
-            "message_away": "You're [amount] away from free shipping",
-            "message_cart_reached": "Your order qualifies for <strong>free shipping</strong>"
-          }
-        },
-        "bundle_upsell": {
-          "type": "bundle_upsell",
-          "settings": {
-            "style": "outline",
-            "max_bundles": "1",
-            "heading": "Bundle & save",
-            "badge_text": "Save [saving]",
-            "saving_format": "percentage",
-            "cta_label": "View bundle"
           }
         },
         "complementary_products": {
