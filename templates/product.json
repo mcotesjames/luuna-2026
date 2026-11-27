@@ -118,6 +118,16 @@
             "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
           }
         },
+        "free_shipping_progress": {
+          "type": "free_shipping_progress",
+          "settings": {
+            "style": "minimal",
+            "show_icon": true,
+            "animate": true,
+            "message_away": "You're [amount] away from free shipping",
+            "message_cart_reached": "Your order qualifies for <strong>free shipping</strong>"
+          }
+        },
         "bundle_upsell": {
           "type": "bundle_upsell",
           "settings": {
@@ -145,6 +155,7 @@
         "title",
         "price",
         "rating_a8tKD9",
+        "free_shipping_progress",
         "variant_picker",
         "purchase_options",
         "buy_buttons",
