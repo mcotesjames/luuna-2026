@@ -1,0 +1,85 @@
+{%- doc -%}
+  PDP "Bundle & save" card, pushing the bundle(s) that contain this product. Each card links to the bundle's page.
+
+  Bundles come from the product's `custom.bundle_upsell` metafield (list of products), set per product in the admin.
+  Bundles that are unavailable, or the product itself, are skipped; nothing renders when none are left.
+  The saving comes from the bundle's compare-at price (first available variant) and is hidden when there isn't one.
+
+  @param {object} product - the product
+  @param {object} block - the bundle_upsell block
+{%- enddoc -%}
+
+{%- liquid
+  assign bs = block.settings
+  assign bu_bundles = product.metafields.custom.bundle_upsell.value
+  assign bu_max = bs.max_bundles | default: 1 | plus: 0
+  assign bu_count = 0
+-%}
+
+{%- capture bu_cards -%}
+  {%- for bundle in bu_bundles -%}
+    {%- if bu_count >= bu_max -%}{%- break -%}{%- endif -%}
+    {%- if bundle == blank or bundle.available == false or bundle.id == product.id -%}{%- continue -%}{%- endif -%}
+
+    {%- liquid
+      assign bu_count = bu_count | plus: 1
+      assign bu_variant = bundle.selected_or_first_available_variant
+      assign bu_saving = 0
+      if bu_variant.compare_at_price > bu_variant.price
+        assign bu_saving = bu_variant.compare_at_price | minus: bu_variant.price
+      endif
+
+      assign bu_badge = blank
+      if bu_saving > 0 and bs.badge_text != blank
+        if bs.saving_format == 'percentage'
+          assign bu_saving_label = bu_saving | times: 100.0 | divided_by: bu_variant.compare_at_price | round | append: '%'
+        else
+          assign bu_saving_label = bu_saving | money_without_trailing_zeros
+        endif
+        assign bu_badge = bs.badge_text | replace: '[saving]', bu_saving_label
+      endif
+
+      assign bu_media = bu_variant.featured_media | default: bundle.featured_media
+    -%}
+
+      <a href="{{ bundle.url }}" class="bu-card">
+        {%- if bu_media != blank -%}
+          <span class="bu-card__media">
+            {{- bu_media | image_url: width: 160 | image_tag: loading: 'lazy', sizes: '72px', widths: '72,144,160', alt: bundle.title -}}
+          </span>
+        {%- endif -%}
+
+        <span class="bu-card__main">
+          <span class="bu-card__eyebrow">
+            {%- if bs.heading != blank -%}<span class="bu-card__heading">{{ bs.heading }}</span>{%- endif -%}
+            {%- if bu_badge != blank -%}<span class="bu-card__badge">{{ bu_badge }}</span>{%- endif -%}
+          </span>
+
+          <span class="bu-card__title">{{ bundle.title }}</span>
+
+          <span class="bu-card__price">
+            <span class="bu-card__price-current">{{ bu_variant.price | money }}</span>
+            {%- if bu_saving > 0 -%}
+              <s class="bu-card__price-compare">
+                <span class="sr-only">{{ 'product.price.regular_price' | t }}</span>
+                {{- bu_variant.compare_at_price | money -}}
+              </s>
+            {%- endif -%}
+          </span>
+        </span>
+
+        <span class="bu-card__cta">
+          {%- if bs.cta_label != blank -%}<span class="bu-card__cta-label">{{ bs.cta_label }}</span>{%- endif -%}
+          {%- render 'icon' with 'arrow-right', width: 14, class: 'bu-card__arrow' -%}
+        </span>
+      </a>
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if bu_count > 0 -%}
+  {{ 'bundle-upsell.css' | asset_url | stylesheet_tag }}
+
+  <div class="bu" data-style="{{ bs.style }}">
+    {{ bu_cards }}
+  </div>
+{%- endif -%}

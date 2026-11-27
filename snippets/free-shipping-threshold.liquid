@@ -1,0 +1,26 @@
+{%- doc -%}
+  Outputs the threshold attributes for <free-shipping-bar> and <free-shipping-progress> in the visitor's currency.
+
+  Looks the active currency up in the "Minimum amount per currency" theme setting (one "CODE: amount" per line).
+  If it is listed, the amount is used as is. Otherwise the base "Minimum amount" is output with a `convert-currency`
+  attribute, and the element converts it at Shopify.currency.rate.
+{%- enddoc -%}
+
+{%- liquid
+  assign fs_threshold = settings.cart_free_shipping_threshold
+  assign fs_convert = true
+  assign fs_lines = settings.cart_free_shipping_thresholds | newline_to_br | split: '<br />'
+
+  for fs_line in fs_lines
+    assign fs_parts = fs_line | split: ':'
+    if fs_parts.size == 2
+      assign fs_code = fs_parts.first | strip | upcase
+      if fs_code == cart.currency.iso_code
+        assign fs_threshold = fs_parts.last | strip
+        assign fs_convert = false
+        break
+      endif
+    endif
+  endfor
+-%}
+threshold="{{ fs_threshold | escape }}" {% if fs_convert %}convert-currency{% endif %}

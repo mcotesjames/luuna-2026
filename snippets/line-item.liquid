@@ -4,6 +4,7 @@
   @param {object} line_item - the line item to render
   @param {boolean} [show_quantity_selector] - if set to true, the quantity selector is displayed (useful for instance in mini-cart)
   @param {object} [section]
+  @param {string} [after_content] - extra HTML shown at the end of the item's details (cart drawer bundle link)
 {%- enddoc -%}
 
 <line-item class="line-item">
@@ -104,6 +105,8 @@
           {%- endfor -%}
         </ul>
       {%- endif -%}
+
+      {{- after_content -}}
     </div>
   </div>
 </line-item>

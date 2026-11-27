@@ -6,6 +6,9 @@
  *   - selling_plan (disabled for one-time, so it is not submitted)
  * Because the sticky bar button submits the same form, it automatically sends the same values. We only keep
  * the button labels (main + sticky) in sync with a live total.
+ *
+ * Quantity starts at 0 (so the free shipping bar starts from the cart alone) and goes back to 0 after each add to
+ * cart. At 0 the submit buttons are disabled and read the "empty" label (block setting).
  */
 
 const UNIT_DAYS = { day: 1, week: 7, month: 30, year: 365 };
@@ -67,7 +70,7 @@ class PurchaseOptions extends HTMLElement {
     this.state = {
       purchaseType: this.dataset.defaultType || 'onetime',
       planId: this.chips[0]?.dataset.planId || null,
-      quantity: 1
+      quantity: 0
     };
 
     this.addEventListener('change', (event) => {
@@ -82,7 +85,7 @@ class PurchaseOptions extends HTMLElement {
     this.querySelector('[data-po-chips]')?.addEventListener('keydown', (event) => this.#onChipKeydown(event), { signal });
 
     // Variant change: the theme re-renders buy buttons and the sticky bar, then fires variant:change
-    this.form.addEventListener('variant:change', () => this.#render(), { signal });
+    this.form.addEventListener('variant:change', () => { this.#render(); this.#emit(); }, { signal });
 
     this.form.addEventListener('variant:add', () => {
       track('add_to_cart_purchase_option', {
@@ -90,9 +93,11 @@ class PurchaseOptions extends HTMLElement {
         selling_plan_id: this.state.purchaseType === 'subscription' ? this.state.planId : null,
         quantity: this.state.quantity
       });
+      this.#setQuantity(0); // added: start again from nothing selected
     }, { signal });
 
     this.#render();
+    this.#emit();
   }
 
   disconnectedCallback() {
@@ -106,6 +111,15 @@ class PurchaseOptions extends HTMLElement {
 
   get variantPlans() {
     return this.variant?.plans || {};
+  }
+
+  /** Price in cents of what the form would add right now (variant x plan x quantity). Read by <free-shipping-progress>. */
+  get lineTotal() {
+    const variant = this.variant;
+    if (!variant) return 0;
+    const isSub = this.state?.purchaseType === 'subscription' && this.state?.planId in this.variantPlans;
+    const unitPrice = isSub ? this.variantPlans[this.state.planId] : variant.price;
+    return unitPrice * (this.state?.quantity ?? 0);
   }
 
   get hasSubscription() {
@@ -174,7 +188,7 @@ class PurchaseOptions extends HTMLElement {
 
   #setQuantity(quantity) {
     const max = this.variant?.max ?? Infinity;
-    this.state.quantity = Math.max(1, Math.min(quantity, max || 1));
+    this.state.quantity = Math.max(0, Math.min(quantity, max || 1));
     this.#render();
     this.#emit();
   }
@@ -192,7 +206,7 @@ class PurchaseOptions extends HTMLElement {
   }
 
   #emit() {
-    this.dispatchEvent(new CustomEvent('purchase-options:change', { bubbles: true, detail: { ...this.state } }));
+    this.dispatchEvent(new CustomEvent('purchase-options:change', { bubbles: true, detail: { ...this.state, lineTotal: this.lineTotal } }));
   }
 
   /* ---------- render ---------- */
@@ -260,7 +274,7 @@ class PurchaseOptions extends HTMLElement {
     this.rowPrice.textContent = formatMoney(unitPrice, moneyFormat);
     this.rowQty.textContent = this.state.quantity;
     const disabled = !variant.available;
-    this.stepButtons[0].disabled = disabled || this.state.quantity <= 1;
+    this.stepButtons[0].disabled = disabled || this.state.quantity <= 0;
     this.stepButtons[1].disabled = disabled || (max != null && this.state.quantity >= max);
 
     // Form fields
@@ -271,14 +285,20 @@ class PurchaseOptions extends HTMLElement {
 
     // Button labels (main buy button + sticky bar, both submit this form)
     if (variant.available) {
-      const total = formatMoney(unitPrice * this.state.quantity, moneyFormat);
-      const chip = this.chips.find((c) => c.dataset.planId === this.state.planId);
-      const phrase = isSub ? ` ${chip?.interval?.phrase || ''}`.trimEnd() : '';
-      const label = `${this.dataset.addLabel} · ${total}${phrase}`;
+      const empty = this.state.quantity === 0;
+      let label = this.dataset.emptyLabel || 'Select quantity';
+      if (!empty) {
+        const total = formatMoney(unitPrice * this.state.quantity, moneyFormat);
+        const chip = this.chips.find((c) => c.dataset.planId === this.state.planId);
+        const phrase = isSub ? ` ${chip?.interval?.phrase || ''}`.trimEnd() : '';
+        label = `${this.dataset.addLabel} · ${total}${phrase}`;
+      }
       Array.from(this.form.elements)
         .filter((element) => element.type === 'submit')
         .forEach((button) => {
           if (button.textContent.trim() !== label) button.textContent = label;
+          button.disabled = empty;
+          button.classList.toggle('is-po-empty', empty); // muted look, see purchase-options.css
         });
     }
   }

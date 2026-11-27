@@ -44,6 +44,7 @@
   form="{{ product_form_id }}"
   data-default-type="{{ default_type }}"
   data-add-label="{{ add_label | escape }}"
+  data-empty-label="{{ bs.empty_button_label | default: 'Select quantity' | escape }}"
   data-badge-template="{{ bs.badge_text | escape }}"
 >
   <script type="application/json" data-po-data>
@@ -67,10 +68,14 @@
   </script>
 
   <fieldset class="po__fieldset">
-    <legend class="sr-only">Purchase options</legend>
+    {%- if bs.container_heading != blank -%}
+      <legend class="po__legend">{{ bs.container_heading | escape }}</legend>
+    {%- else -%}
+      <legend class="sr-only">Purchase options</legend>
+    {%- endif -%}
 
     {%- if has_subscription -%}
-      <div class="po-card" data-po-card="subscription" {% if variant.selling_plan_allocations.size == 0 %}hidden{% endif %}>
+      <div class="po-card{% if default_type == 'subscription' %} is-open{% endif %}" data-po-card="subscription" {% if variant.selling_plan_allocations.size == 0 %}hidden{% endif %}>
         <label class="po-card__header">
           <span class="po-card__main">
             <span class="po-card__heading">
@@ -126,7 +131,7 @@
     {%- endif -%}
 
     {%- if show_onetime -%}
-      <div class="po-card" data-po-card="onetime" {% unless has_subscription %}data-po-solo{% endunless %}>
+      <div class="po-card{% if default_type == 'onetime' %} is-open{% endif %}" data-po-card="onetime" {% unless has_subscription %}data-po-solo{% endunless %}>
         <label class="po-card__header">
           <span class="po-card__main">
             <span class="po-card__heading">
@@ -161,7 +166,7 @@
         <button type="button" class="po-stepper__btn" data-po-step="-1" aria-label="{{ 'product.quantity.decrease_quantity' | t | escape }}">
           {%- render 'icon' with 'minus', width: 14 -%}
         </button>
-        <span class="po-stepper__value" data-po-qty aria-live="polite">1</span>
+        <span class="po-stepper__value" data-po-qty aria-live="polite">0</span>
         <button type="button" class="po-stepper__btn" data-po-step="1" aria-label="{{ 'product.quantity.increase_quantity' | t | escape }}">
           {%- render 'icon' with 'plus', width: 14 -%}
         </button>
@@ -169,6 +174,6 @@
     </div>
   </template>
 
-  <input type="hidden" name="quantity" value="1" form="{{ product_form_id }}" data-po-quantity-input>
+  <input type="hidden" name="quantity" value="0" form="{{ product_form_id }}" data-po-quantity-input>
   <input type="hidden" name="selling_plan" value="" form="{{ product_form_id }}" data-po-plan-input disabled>
 </purchase-options>

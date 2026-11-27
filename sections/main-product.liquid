@@ -795,6 +795,13 @@
         },
         {
           "type": "text",
+          "id": "container_heading",
+          "label": "Heading",
+          "info": "Shown at the top of the purchase options panel. Leave blank to hide.",
+          "default": "Choose how to buy"
+        },
+        {
+          "type": "text",
           "id": "subscribe_title",
           "label": "Subscribe title",
           "default": "Subscribe & save"
@@ -857,6 +864,13 @@
           "id": "unit_label",
           "label": "Price unit",
           "default": "per pack"
+        },
+        {
+          "type": "text",
+          "id": "empty_button_label",
+          "label": "Add to cart label at quantity 0",
+          "info": "Quantity starts at 0. Add to cart stays disabled until a quantity is chosen.",
+          "default": "Select quantity"
         },
         {
           "type": "header",
@@ -1449,6 +1463,151 @@
           "id": "text",
           "label": "t:global.text.content",
           "default": "<p>Share some content to your customers about your products.</p>"
+        }
+      ]
+    },
+    {
+      "type": "bundle_upsell",
+      "name": "Bundle upsell",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Links to bundles that contain this product. Pick the bundles per product in the Bundle upsell metafield (Products > product > Metafields). Nothing shows when a product has none, or they are unavailable."
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "outline", "label": "White card" },
+            { "value": "cream", "label": "Cream card" }
+          ],
+          "default": "outline"
+        },
+        {
+          "type": "select",
+          "id": "max_bundles",
+          "label": "Bundles to show",
+          "options": [
+            { "value": "1", "label": "1" },
+            { "value": "2", "label": "2" },
+            { "value": "3", "label": "3" }
+          ],
+          "default": "1"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Bundle & save"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Saving badge",
+          "info": "[saving] is replaced with the saving from the bundle's compare-at price. Hidden when the bundle has no compare-at price.",
+          "default": "Save [saving]"
+        },
+        {
+          "type": "select",
+          "id": "saving_format",
+          "label": "Show saving as",
+          "options": [
+            { "value": "percentage", "label": "Percentage" },
+            { "value": "amount", "label": "Amount" }
+          ],
+          "default": "percentage"
+        },
+        {
+          "type": "text",
+          "id": "cta_label",
+          "label": "Link label",
+          "info": "Hidden on small phones, where only the arrow shows.",
+          "default": "View bundle"
+        }
+      ]
+    },
+    {
+      "type": "free_shipping_progress",
+      "name": "Free shipping progress",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows how close the cart is to free shipping, previewing what the selected product would add. The minimum amount per currency is set in Theme settings > Cart."
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "minimal", "label": "Minimal" },
+            { "value": "card", "label": "Cream card" },
+            { "value": "bold", "label": "Espresso card" }
+          ],
+          "default": "minimal"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show delivery icon",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Animation",
+          "info": "A glint runs along the bar when it moves forward, and the delivery truck pulses when free shipping is unlocked. Off for visitors who prefer reduced motion."
+        },
+        {
+          "type": "checkbox",
+          "id": "animate",
+          "label": "Animate",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Messages",
+          "info": "[amount] is replaced with the amount left to spend."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "message_away",
+          "label": "Below the minimum",
+          "info": "Cart plus the quantity selected on this page.",
+          "default": "You're [amount] away from free shipping"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "message_cart_reached",
+          "label": "Minimum reached",
+          "info": "When the cart, or the cart plus the product selected on this page, reaches the minimum.",
+          "default": "Your order qualifies for <strong>free shipping</strong>"
+        },
+        {
+          "type": "header",
+          "content": "Colours",
+          "info": "Leave blank to use the style's colours."
+        },
+        {
+          "type": "color",
+          "id": "fill_color",
+          "label": "Bar"
+        },
+        {
+          "type": "color",
+          "id": "track_color",
+          "label": "Bar background"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Card background"
         }
       ]
     },

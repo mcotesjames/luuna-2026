@@ -1,0 +1,152 @@
+/* PDP "Bundle & save" card — see snippets/bundle-upsell.liquid
+ * Same palette and type as the purchase option cards (assets/purchase-options.css). */
+
+.bu {
+  --bu-ink: #1c1c1c;
+  --bu-muted: #6b665a;
+  --bu-border: #d9d4c3;
+  --bu-bg: #fbf3dc;
+  --bu-brown: #433930;
+  --bu-cream: #fbedca;
+
+  display: grid;
+  gap: 10px;
+  font-family: var(--text-font-family);
+  color: var(--bu-ink);
+}
+
+/* Outline: white card, lighter touch */
+.bu[data-style="outline"] {
+  --bu-bg: #ffffff;
+}
+
+.bu-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px 12px 12px;
+  background: var(--bu-bg);
+  border: 1px dashed var(--bu-brown);
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bu-card:hover {
+  border-style: solid;
+  box-shadow: 0 6px 16px -10px rgb(35 25 21 / 0.45);
+}
+
+.bu-card:focus-visible {
+  outline: 2px solid var(--bu-ink);
+  outline-offset: 2px;
+}
+
+.bu-card__media {
+  flex: none;
+  width: 72px;
+  aspect-ratio: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.bu-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bu-card__main {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.bu-card__eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.bu-card__heading {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--bu-muted);
+}
+
+/* Matches .po-badge */
+.bu-card__badge {
+  background: var(--bu-brown);
+  color: var(--bu-cream);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 4px 6px;
+  border-radius: 2px;
+}
+
+/* Matches .po-card__title */
+.bu-card__title {
+  font-family: 'Adelia', serif;
+  font-size: 14px;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.bu-card__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+}
+
+.bu-card__price-current { font-size: 14px; font-weight: 700; }
+.bu-card__price-compare { font-size: 13px; color: var(--bu-muted); }
+
+.bu-card__cta {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.bu-card__arrow {
+  transition: transform 0.2s ease;
+}
+
+.bu-card:hover .bu-card__arrow {
+  transform: translateX(3px);
+}
+
+[dir="rtl"] .bu-card__arrow { transform: scaleX(-1); }
+[dir="rtl"] .bu-card:hover .bu-card__arrow { transform: scaleX(-1) translateX(3px); }
+
+/* Narrow screens: keep just the arrow so the title has room */
+@media screen and (max-width: 479px) {
+  .bu-card__cta-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bu-card,
+  .bu-card__arrow { transition: none; }
+}

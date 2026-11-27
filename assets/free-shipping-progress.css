@@ -1,0 +1,241 @@
+/* PDP free shipping progress bar — see snippets/free-shipping-progress.liquid
+ * Presets (data-style) use the LUUNA palette; the block's colour pickers override them via the --fsp-* variables. */
+
+.fsp {
+  --fsp-fill: #4c2d00;
+  --fsp-track: #e6e1d0;
+  --fsp-text: #1c1c1c;
+  --fsp-bg: transparent;
+  --fsp-border: transparent;
+  --fsp-height: 6px;
+  --fsp-padding: 0;
+
+  display: grid;
+  gap: 10px;
+  padding: var(--fsp-padding);
+  background: var(--fsp-bg);
+  border: 1px solid var(--fsp-border);
+  border-radius: 6px;
+  color: var(--fsp-text);
+  font-family: var(--text-font-family);
+}
+
+.fsp[hidden] { display: none; }
+
+/* Minimal: solid brown bar on sand, no container */
+.fsp[data-style="minimal"] {
+  --fsp-height: 6px;
+  --fsp-padding: 2px 0 4px;
+}
+
+/* Card: cream panel matching the open purchase option card */
+.fsp[data-style="card"] {
+  --fsp-bg: #fbf3dc;
+  --fsp-border: #e6e1d0;
+  --fsp-track: #e6e1d0;
+  --fsp-fill: #433930;
+  --fsp-padding: 14px 16px;
+}
+
+/* Bold: espresso panel with cream bar, matching the brand colour scheme */
+.fsp[data-style="bold"] {
+  --fsp-bg: #231915;
+  --fsp-text: #fbedca;
+  --fsp-fill: #fbedca;
+  --fsp-track: rgb(251 237 202 / 0.18);
+  --fsp-padding: 14px 16px;
+}
+
+.fsp__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fsp__icon {
+  flex-shrink: 0;
+}
+
+.fsp__message {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.fsp__message strong {
+  font-weight: 700;
+}
+
+/* ---------- Truck ----------
+ * Overlaid on the bar, centred on it and facing forward (the icon faces left, so it is mirrored), with its front at the
+ * end of the fill: it drives along with the progress (--fsp-preview-progress, set by JS), from the start of the bar to
+ * the end, and pulses there when free shipping is unlocked. A patch of the background behind it stops the bar showing
+ * through the outline icon. */
+
+.fsp__road {
+  position: relative;
+}
+
+.fsp__road--truck {
+  --fsp-truck-width: 22px; /* the icon itself: the patch hugs it, so the bar runs right up to the truck */
+  /* The truck stands ~8px proud of the bar below it */
+  margin-block-end: 4px;
+}
+
+.fsp__truck {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: clamp(
+    0px,
+    calc(var(--fsp-preview-progress, 0) * 100% - var(--fsp-truck-width)),
+    calc(100% - var(--fsp-truck-width))
+  );
+  /* Same timing as the fill (.fsp__preview) */
+  transition: inset-inline-start 0.45s ease-in-out;
+  display: flex;
+  justify-content: center;
+  width: var(--fsp-truck-width);
+  border-radius: 2px;
+  background: var(--fsp-truck-bg);
+  transform: translateY(-50%);
+  pointer-events: none;
+  /* In front of the bar (the track is positioned too, and comes later in the markup) */
+  z-index: 1;
+}
+
+/* Patch colour: LUUNA's page cream (colour scheme 1's background). The theme's --background can't be used here, as
+   the product section has no scheme of its own and inherits a transparent one. The card styles, and a "Card
+   background" colour set on the block, use the card colour (--fsp-bg). */
+.fsp { --fsp-truck-bg: #fffeef; }
+.fsp:is([data-style="card"], [data-style="bold"]) { --fsp-truck-bg: var(--fsp-bg); }
+
+.fsp__truck .fsp__icon {
+  display: block;
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .fsp__truck .fsp__icon { transform: none; }
+
+.fsp__track {
+  position: relative;
+  height: var(--fsp-height);
+  border-radius: 999px;
+  background: var(--fsp-track);
+  overflow: hidden;
+}
+
+.fsp__preview {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* Revealed with clip-path rather than scaled, so the glint keeps its size as the bar grows */
+  clip-path: inset(0 calc((1 - var(--fsp-progress, 0)) * 100%) 0 0 round 999px);
+  transition: clip-path 0.45s ease-in-out;
+}
+
+[dir="rtl"] .fsp__preview {
+  clip-path: inset(0 0 0 calc((1 - var(--fsp-progress, 0)) * 100%) round 999px);
+}
+
+/* The bar: cart plus the product selected on this page, one solid fill whether or not it's in the cart yet */
+.fsp__preview {
+  background: var(--fsp-fill);
+  --fsp-progress: var(--fsp-preview-progress, 0);
+}
+
+/* ---------- Animation ----------
+ * - progressed: one quick glint along the bar when it moves forward (data-play, set by JS)
+ * - unlocked:   the glint, and the truck pulses once it reaches the end (data-play="unlocked")
+ * Everything is off for prefers-reduced-motion and when the block's Animate setting is off.
+ */
+
+.fsp {
+  --fsp-glint: rgb(255 255 255 / 0.45);
+  position: relative;
+}
+
+/* Cream bar on espresso: near-white glint */
+.fsp[data-style="bold"] { --fsp-glint: rgb(255 255 255 / 0.95); }
+
+.fsp__preview {
+  overflow: hidden;
+}
+
+.fsp__preview::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -45%;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, var(--fsp-glint) 50%, transparent);
+  transform: translateX(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes fsp-glint-once {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(325%); opacity: 1; }
+}
+
+/* Unlocked: the truck swells and settles, once */
+@keyframes fsp-truck-pulse {
+  0%   { scale: 1; }
+  35%  { scale: 1.3; }
+  65%  { scale: 0.95; }
+  100% { scale: 1; }
+}
+
+/* Bumps along the road while it drives */
+@keyframes fsp-truck-bump {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -1.5px; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Bar moved forward */
+  .fsp:not([data-animation="none"]):is([data-play="progressed"], [data-play="unlocked"]) .fsp__preview::after {
+    animation: fsp-glint-once 0.9s ease-out;
+  }
+
+  /* Bar moved forward: the truck bumps along as it follows the fill */
+  .fsp:not([data-animation="none"])[data-play="progressed"] .fsp__truck .fsp__icon {
+    animation: fsp-truck-bump 0.15s ease-in-out 3;
+  }
+
+  /* Free shipping unlocked: the truck bumps along to the end with the fill (0.45s), then pulses */
+  .fsp:not([data-animation="none"])[data-play="unlocked"] .fsp__truck {
+    animation: fsp-truck-pulse 0.6s cubic-bezier(0.3, 0, 0.3, 1) 0.45s;
+  }
+
+  .fsp:not([data-animation="none"])[data-play="unlocked"] .fsp__truck .fsp__icon {
+    animation: fsp-truck-bump 0.15s ease-in-out 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fsp[data-state] .fsp__preview,
+  .fsp__truck {
+    transition: none;
+  }
+}
+
+/* ---------- Cart drawer ----------
+ * Sits at the top of the drawer body, above the line items (which bring their own top padding). The section wraps it in
+ * a plain div so the drawer's scrolling grid sizes the row to the bar. */
+
+.cart-drawer__free-shipping {
+  margin-block-start: var(--drawer-body-padding-block, 1.25rem);
+}
+
+/* Minimal has no panel: keep the old bar's full-width divider so it still reads as its own strip */
+.cart-drawer__free-shipping[data-style="minimal"] {
+  margin-inline: calc(-1 * var(--drawer-body-padding-inline, 1.25rem));
+  padding: 0 var(--drawer-body-padding-inline, 1.25rem) var(--drawer-body-padding-block, 1.25rem);
+  border-radius: 0;
+  border-width: 0 0 1px;
+  border-color: rgb(var(--border-color));
+}
+
+.cart-drawer__free-shipping-wrapper:has([data-style="minimal"]) + .cart-drawer__items {
+  padding-block-start: var(--drawer-body-padding-block, 1.25rem);
+}

@@ -1515,6 +1515,11 @@ var FreeShippingBar = class extends HTMLElement {
     __privateAdd(this, _currencyFormatter, new Intl.NumberFormat(Shopify.locale, { style: "currency", currency: Shopify.currency.active }));
     __privateAdd(this, _threshold);
     __privateSet(this, _threshold, parseFloat(this.getAttribute("threshold").replace(/[^0-9.]/g, "")) * 100);
+    // LUUNA: thresholds not set per currency are converted from the base currency (see snippets/free-shipping-threshold.liquid)
+    if (this.hasAttribute("convert-currency")) {
+      __privateSet(this, _threshold, Math.round(__privateGet(this, _threshold) * (parseFloat(window.Shopify?.currency?.rate) || 1)));
+      this.removeAttribute("convert-currency");
+    }
     this.setAttribute("threshold", __privateGet(this, _threshold));
   }
   static get observedAttributes() {
