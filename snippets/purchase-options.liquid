@@ -44,6 +44,7 @@
   form="{{ product_form_id }}"
   data-default-type="{{ default_type }}"
   data-add-label="{{ add_label | escape }}"
+  data-empty-label="{{ bs.empty_button_label | default: 'Select quantity' | escape }}"
   data-badge-template="{{ bs.badge_text | escape }}"
 >
   <script type="application/json" data-po-data>
@@ -161,7 +162,7 @@
         <button type="button" class="po-stepper__btn" data-po-step="-1" aria-label="{{ 'product.quantity.decrease_quantity' | t | escape }}">
           {%- render 'icon' with 'minus', width: 14 -%}
         </button>
-        <span class="po-stepper__value" data-po-qty aria-live="polite">1</span>
+        <span class="po-stepper__value" data-po-qty aria-live="polite">0</span>
         <button type="button" class="po-stepper__btn" data-po-step="1" aria-label="{{ 'product.quantity.increase_quantity' | t | escape }}">
           {%- render 'icon' with 'plus', width: 14 -%}
         </button>
@@ -169,6 +170,6 @@
     </div>
   </template>
 
-  <input type="hidden" name="quantity" value="1" form="{{ product_form_id }}" data-po-quantity-input>
+  <input type="hidden" name="quantity" value="0" form="{{ product_form_id }}" data-po-quantity-input>
   <input type="hidden" name="selling_plan" value="" form="{{ product_form_id }}" data-po-plan-input disabled>
 </purchase-options>

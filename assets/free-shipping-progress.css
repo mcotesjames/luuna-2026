@@ -1,0 +1,193 @@
+/* PDP free shipping progress bar — see snippets/free-shipping-progress.liquid
+ * Presets (data-style) use the LUUNA palette; the block's colour pickers override them via the --fsp-* variables. */
+
+.fsp {
+  --fsp-fill: #231915;
+  --fsp-track: #e6e1d0;
+  --fsp-text: #1c1c1c;
+  --fsp-bg: transparent;
+  --fsp-border: transparent;
+  --fsp-height: 6px;
+  --fsp-padding: 0;
+
+  display: grid;
+  gap: 10px;
+  padding: var(--fsp-padding);
+  background: var(--fsp-bg);
+  border: 1px solid var(--fsp-border);
+  border-radius: 6px;
+  color: var(--fsp-text);
+  font-family: var(--text-font-family);
+}
+
+.fsp[hidden] { display: none; }
+
+/* Minimal: espresso bar on sand, no container */
+.fsp[data-style="minimal"] {
+  --fsp-height: 4px;
+}
+
+/* Card: cream panel matching the open purchase option card */
+.fsp[data-style="card"] {
+  --fsp-bg: #fbf3dc;
+  --fsp-border: #e6e1d0;
+  --fsp-track: #e6e1d0;
+  --fsp-fill: #433930;
+  --fsp-padding: 14px 16px;
+}
+
+/* Bold: espresso panel with cream bar, matching the brand colour scheme */
+.fsp[data-style="bold"] {
+  --fsp-bg: #231915;
+  --fsp-text: #fbedca;
+  --fsp-fill: #fbedca;
+  --fsp-track: rgb(251 237 202 / 0.18);
+  --fsp-padding: 14px 16px;
+}
+
+.fsp__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fsp__icon {
+  flex-shrink: 0;
+}
+
+.fsp__message {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.fsp__message strong {
+  font-weight: 700;
+}
+
+.fsp__track {
+  position: relative;
+  height: var(--fsp-height);
+  border-radius: 999px;
+  background: var(--fsp-track);
+  overflow: hidden;
+}
+
+.fsp__preview {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  /* Revealed with clip-path rather than scaled, so the stripes and glint keep their size as the bar grows */
+  clip-path: inset(0 calc((1 - var(--fsp-progress, 0)) * 100%) 0 0 round 999px);
+  transition: clip-path 0.45s ease-in-out;
+}
+
+[dir="rtl"] .fsp__preview {
+  clip-path: inset(0 0 0 calc((1 - var(--fsp-progress, 0)) * 100%) round 999px);
+}
+
+/* The bar: cart plus the product selected on this page, one stripe style whether or not it's in the cart yet */
+.fsp__preview {
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--fsp-fill) 45%, transparent) 0 4px,
+    color-mix(in srgb, var(--fsp-fill) 30%, transparent) 4px 8px
+  );
+  --fsp-progress: var(--fsp-preview-progress, 0);
+}
+
+/* ---------- Animation ----------
+ * Bar glint = something changed. Module shine = free shipping unlocked.
+ * - progressed: one quick glint along the bar when it moves forward (data-play, set by JS)
+ * - unlocked:   the same bar glint as any other step (data-play="unlocked")
+ * - reached:    a foil-like shine sweeps across the whole module, rests, repeats. Reached means the
+ *               cart plus the current selection hits the minimum, whether or not it is in the cart yet.
+ * Everything is off for prefers-reduced-motion and when the block's Animate setting is off.
+ */
+
+.fsp {
+  --fsp-glint: rgb(255 255 255 / 0.45);
+  --fsp-shine: rgb(255 255 255 / 0.22);
+  --fsp-cycle: 3.6s;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.fsp[data-style="bold"] {
+  /* Cream bar on espresso: near-white glint; warm cream shine across the card */
+  --fsp-glint: rgb(255 255 255 / 0.95);
+  --fsp-shine: rgb(255 240 205 / 0.36);
+}
+
+.fsp[data-style="card"] { --fsp-shine: rgb(255 255 255 / 0.7); }
+.fsp[data-style="minimal"] { --fsp-shine: rgb(255 255 255 / 0.9); }
+
+.fsp[data-animation="subtle"] { --fsp-cycle: 5s; }
+.fsp[data-animation="bold"] { --fsp-cycle: 3.6s; }
+
+.fsp__preview {
+  overflow: hidden;
+}
+
+.fsp__preview::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -45%;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, var(--fsp-glint) 50%, transparent);
+  transform: translateX(0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes fsp-glint-once {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(325%); opacity: 1; }
+}
+
+/* Module shine: a soft diagonal band of light over the whole card */
+.fsp::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 45%;
+  z-index: 1;
+  /* Horizontal gradient (so both edges fade fully), slanted with skew */
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--fsp-shine) 50%, transparent) 33%,
+    var(--fsp-shine) 50%,
+    color-mix(in srgb, var(--fsp-shine) 50%, transparent) 67%,
+    transparent 100%
+  );
+  transform: translateX(-105%) skewX(-20deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes fsp-shine {
+  0%        { transform: translateX(-105%) skewX(-20deg); opacity: 1; }
+  30%       { transform: translateX(240%) skewX(-20deg); opacity: 1; }
+  31%, 100% { transform: translateX(240%) skewX(-20deg); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Bar moved forward */
+  .fsp:not([data-animation="none"]):is([data-play="progressed"], [data-play="unlocked"]) .fsp__preview::after {
+    animation: fsp-glint-once 0.9s ease-out;
+  }
+
+  /* Free shipping unlocked: shine */
+  .fsp:not([data-animation="none"])[data-state="reached"]::after {
+    /* First sweep follows the bar glint (0.9s) */
+    animation: fsp-shine var(--fsp-cycle) cubic-bezier(0.25, 0, 0.2, 1) 0.9s infinite;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fsp[data-state] .fsp__preview {
+    transition: none;
+  }
+}

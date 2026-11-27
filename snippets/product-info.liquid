@@ -407,6 +407,11 @@
               {%- render 'purchase-options', product: product, block: block, product_form_id: product_form_id -%}
             {%- endif -%}
 
+          {%- when 'free_shipping_progress' -%}
+            {%- unless product == blank or product.gift_card? -%}
+              {%- render 'free-shipping-progress', product: product, block: block, product_form_id: product_form_id -%}
+            {%- endunless -%}
+
           {%- when 'buy_buttons' -%}
             {%- render 'buy-buttons',
                 product: product,

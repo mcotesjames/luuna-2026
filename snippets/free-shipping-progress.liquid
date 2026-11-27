@@ -1,0 +1,73 @@
+{%- doc -%}
+  PDP free shipping progress bar. Shows how close the cart is to the free shipping threshold, with a lighter
+  segment previewing what the currently selected product (variant, plan and quantity) would add.
+
+  Updates live on cart changes (cart:change), purchase option changes (purchase-options:change) and variant changes.
+  Thresholds come from the theme settings (Cart > Free shipping bar), per currency where set.
+
+  @param {object} product - the product
+  @param {object} block - the free_shipping_progress block
+  @param {string} product_form_id - the ID of the product form
+{%- enddoc -%}
+
+{%- liquid
+  assign fsp_cart_total = 0
+  for line_item in cart.items
+    if line_item.requires_shipping
+      assign fsp_cart_total = fsp_cart_total | plus: line_item.final_line_price
+    endif
+  endfor
+  for discount_application in cart.cart_level_discount_applications
+    assign fsp_cart_total = fsp_cart_total | minus: discount_application.total_allocated_amount
+  endfor
+
+  assign fsp_variant = product.selected_or_first_available_variant
+  assign fsp_has_purchase_options = section.blocks | where: 'type', 'purchase_options' | size
+  assign fsp_preview = 0
+  if fsp_variant.requires_shipping and fsp_has_purchase_options == 0
+    # Purchase options start at quantity 0; the theme's own quantity selector starts at 1
+    assign fsp_preview = fsp_variant.price
+  endif
+
+  assign bs = block.settings
+-%}
+
+{{ 'free-shipping-progress.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'free-shipping-progress.js' | asset_url }}" type="module"></script>
+
+<free-shipping-progress
+  class="fsp"
+  form="{{ product_form_id }}"
+  data-style="{{ bs.style }}"
+  data-animation="{% if bs.animate %}{{ bs.animation_intensity }}{% else %}none{% endif %}"
+  data-cart-total="{{ fsp_cart_total }}"
+  data-preview="{{ fsp_preview }}"
+  data-requires-shipping="{{ fsp_variant.requires_shipping }}"
+  data-message-away="{{ bs.message_away | escape }}"
+  data-message-cart-reached="{{ bs.message_cart_reached | escape }}"
+  {% render 'free-shipping-threshold' %}
+  style="
+    {%- if bs.fill_color != blank -%}--fsp-fill: {{ bs.fill_color }};{%- endif -%}
+    {%- if bs.track_color != blank -%}--fsp-track: {{ bs.track_color }};{%- endif -%}
+    {%- if bs.text_color != blank -%}--fsp-text: {{ bs.text_color }};{%- endif -%}
+    {%- if bs.background_color != blank -%}--fsp-bg: {{ bs.background_color }};{%- endif -%}
+  "
+>
+  <div class="fsp__header">
+    {%- if bs.show_icon -%}
+      {%- render 'icon' with 'picto-delivery-truck', class: 'fsp__icon', width: 22 -%}
+    {%- endif -%}
+    <p class="fsp__message" aria-live="polite">&nbsp;</p>
+  </div>
+
+  <div
+    class="fsp__track"
+    role="progressbar"
+    aria-label="Progress towards free shipping"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+  >
+    <span class="fsp__preview"></span>
+  </div>
+</free-shipping-progress>

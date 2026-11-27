@@ -267,3 +267,17 @@ form[data-po-type='subscription'] .shopify-payment-button { display: none; }
   .po-card__body,
   .po-radio::before { transition: none; }
 }
+
+/* ---------- Add to cart at quantity 0 ----------
+ * The theme has no disabled button style (sold out swaps to an outline button), so the main and sticky Add to cart
+ * buttons get a muted, clearly inactive look while no quantity is selected (class set in purchase-options.js). */
+
+.button.is-po-empty,
+.button.is-po-empty:hover {
+  --initial-gradient: linear-gradient(#e6e1d0, #e6e1d0);
+  --hover-gradient: linear-gradient(#e6e1d0, #e6e1d0);
+  color: #6b665a;
+  border-color: #e6e1d0;
+  cursor: not-allowed !important;
+  box-shadow: none;
+}

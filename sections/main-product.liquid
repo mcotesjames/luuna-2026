@@ -859,6 +859,13 @@
           "default": "per pack"
         },
         {
+          "type": "text",
+          "id": "empty_button_label",
+          "label": "Add to cart label at quantity 0",
+          "info": "Quantity starts at 0. Add to cart stays disabled until a quantity is chosen.",
+          "default": "Select quantity"
+        },
+        {
           "type": "header",
           "content": "Quick buy notice"
         },
@@ -1449,6 +1456,99 @@
           "id": "text",
           "label": "t:global.text.content",
           "default": "<p>Share some content to your customers about your products.</p>"
+        }
+      ]
+    },
+    {
+      "type": "free_shipping_progress",
+      "name": "Free shipping progress",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows how close the cart is to free shipping, previewing what the selected product would add. The minimum amount per currency is set in Theme settings > Cart."
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "Style",
+          "options": [
+            { "value": "minimal", "label": "Minimal" },
+            { "value": "card", "label": "Cream card" },
+            { "value": "bold", "label": "Espresso card" }
+          ],
+          "default": "bold"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_icon",
+          "label": "Show delivery icon",
+          "default": true
+        },
+        {
+          "type": "header",
+          "content": "Animation",
+          "info": "A glint runs along the bar when it moves forward, and a shine sweeps across the whole module once free shipping is unlocked. Off for visitors who prefer reduced motion."
+        },
+        {
+          "type": "checkbox",
+          "id": "animate",
+          "label": "Animate",
+          "default": true
+        },
+        {
+          "type": "select",
+          "id": "animation_intensity",
+          "label": "Intensity",
+          "options": [
+            { "value": "subtle", "label": "Subtle (slower)" },
+            { "value": "bold", "label": "Bold (faster)" }
+          ],
+          "default": "bold"
+        },
+        {
+          "type": "header",
+          "content": "Messages",
+          "info": "[amount] is replaced with the amount left to spend."
+        },
+        {
+          "type": "inline_richtext",
+          "id": "message_away",
+          "label": "Below the minimum",
+          "info": "Cart plus the quantity selected on this page.",
+          "default": "You're [amount] away from free shipping"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "message_cart_reached",
+          "label": "Minimum reached",
+          "info": "When the cart, or the cart plus the product selected on this page, reaches the minimum.",
+          "default": "Your order qualifies for <strong>free shipping</strong>"
+        },
+        {
+          "type": "header",
+          "content": "Colours",
+          "info": "Leave blank to use the style's colours."
+        },
+        {
+          "type": "color",
+          "id": "fill_color",
+          "label": "Bar"
+        },
+        {
+          "type": "color",
+          "id": "track_color",
+          "label": "Bar background"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text"
+        },
+        {
+          "type": "color",
+          "id": "background_color",
+          "label": "Card background"
         }
       ]
     },
