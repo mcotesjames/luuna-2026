@@ -1,13 +1,19 @@
 {%- doc -%}
-  PDP free shipping progress bar. Shows how close the cart is to the free shipping threshold, with a lighter
-  segment previewing what the currently selected product (variant, plan and quantity) would add.
+  Free shipping progress bar, used on the PDP and in the cart drawer. Shows how close the cart is to the free
+  shipping threshold. On the PDP it also previews what the currently selected product (variant, plan and quantity)
+  would add.
 
-  Updates live on cart changes (cart:change), purchase option changes (purchase-options:change) and variant changes.
+  PDP: updates live on cart changes (cart:change), purchase option changes (purchase-options:change) and variant changes.
+  Cart drawer (no product): the drawer re-renders on every cart change, and `persist` lets the new bar animate on from
+  where the previous one was.
   Thresholds come from the theme settings (Cart > Free shipping bar), per currency where set.
 
-  @param {object} product - the product
-  @param {object} block - the free_shipping_progress block
-  @param {string} product_form_id - the ID of the product form
+  @param {object} [product] - the product (PDP only)
+  @param {object} [block] - the free_shipping_progress block (PDP)
+  @param {object} [settings_source] - a section or block whose settings use the same IDs as the block (cart drawer)
+  @param {string} [product_form_id] - the ID of the product form (PDP only)
+  @param {string} [persist] - key to carry the bar's position across re-renders (cart drawer)
+  @param {string} [class] - extra classes
 {%- enddoc -%}
 
 {%- liquid
@@ -21,28 +27,37 @@
     assign fsp_cart_total = fsp_cart_total | minus: discount_application.total_allocated_amount
   endfor
 
-  assign fsp_variant = product.selected_or_first_available_variant
-  assign fsp_has_purchase_options = section.blocks | where: 'type', 'purchase_options' | size
   assign fsp_preview = 0
-  if fsp_variant.requires_shipping and fsp_has_purchase_options == 0
-    # Purchase options start at quantity 0; the theme's own quantity selector starts at 1
-    assign fsp_preview = fsp_variant.price
+  assign fsp_requires_shipping = cart.requires_shipping
+  if product != blank
+    assign fsp_variant = product.selected_or_first_available_variant
+    assign fsp_requires_shipping = fsp_variant.requires_shipping
+    assign fsp_has_purchase_options = section.blocks | where: 'type', 'purchase_options' | size
+    if fsp_variant.requires_shipping and fsp_has_purchase_options == 0
+      # Purchase options start at quantity 0; the theme's own quantity selector starts at 1
+      assign fsp_preview = fsp_variant.price
+    endif
   endif
 
-  assign bs = block.settings
+  if block != blank
+    assign bs = block.settings
+  else
+    assign bs = settings_source.settings
+  endif
 -%}
 
 {{ 'free-shipping-progress.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'free-shipping-progress.js' | asset_url }}" type="module"></script>
 
 <free-shipping-progress
-  class="fsp"
-  form="{{ product_form_id }}"
+  class="fsp {{ class }}"
+  {% if product_form_id != blank %}form="{{ product_form_id }}"{% endif %}
+  {% if persist != blank %}data-persist="{{ persist | escape }}"{% endif %}
   data-style="{{ bs.style }}"
-  data-animation="{% if bs.animate %}{{ bs.animation_intensity }}{% else %}none{% endif %}"
+  data-animation="{% if bs.animate %}on{% else %}none{% endif %}"
   data-cart-total="{{ fsp_cart_total }}"
   data-preview="{{ fsp_preview }}"
-  data-requires-shipping="{{ fsp_variant.requires_shipping }}"
+  data-requires-shipping="{{ fsp_requires_shipping }}"
   data-message-away="{{ bs.message_away | escape }}"
   data-message-cart-reached="{{ bs.message_cart_reached | escape }}"
   {% render 'free-shipping-threshold' %}
@@ -50,24 +65,30 @@
     {%- if bs.fill_color != blank -%}--fsp-fill: {{ bs.fill_color }};{%- endif -%}
     {%- if bs.track_color != blank -%}--fsp-track: {{ bs.track_color }};{%- endif -%}
     {%- if bs.text_color != blank -%}--fsp-text: {{ bs.text_color }};{%- endif -%}
-    {%- if bs.background_color != blank -%}--fsp-bg: {{ bs.background_color }};{%- endif -%}
+    {%- if bs.background_color != blank -%}--fsp-bg: {{ bs.background_color }}; --fsp-truck-bg: {{ bs.background_color }};{%- endif -%}
   "
 >
   <div class="fsp__header">
-    {%- if bs.show_icon -%}
-      {%- render 'icon' with 'picto-delivery-truck', class: 'fsp__icon', width: 22 -%}
-    {%- endif -%}
     <p class="fsp__message" aria-live="polite">&nbsp;</p>
   </div>
 
-  <div
-    class="fsp__track"
-    role="progressbar"
-    aria-label="Progress towards free shipping"
-    aria-valuemin="0"
-    aria-valuemax="100"
-    aria-valuenow="0"
-  >
-    <span class="fsp__preview"></span>
+  {%- comment -%}The truck is parked on top of the end of the bar; on unlock it drives off and back up the bar (CSS){%- endcomment -%}
+  <div class="fsp__road{% if bs.show_icon %} fsp__road--truck{% endif %}">
+    {%- if bs.show_icon -%}
+      <span class="fsp__truck">
+        {%- render 'icon' with 'picto-delivery-truck', class: 'fsp__icon', width: 22 -%}
+      </span>
+    {%- endif -%}
+
+    <div
+      class="fsp__track"
+      role="progressbar"
+      aria-label="Progress towards free shipping"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      aria-valuenow="0"
+    >
+      <span class="fsp__preview"></span>
+    </div>
   </div>
 </free-shipping-progress>

@@ -407,6 +407,11 @@
               {%- render 'purchase-options', product: product, block: block, product_form_id: product_form_id -%}
             {%- endif -%}
 
+          {%- when 'bundle_upsell' -%}
+            {%- unless product == blank -%}
+              {%- render 'bundle-upsell', product: product, block: block -%}
+            {%- endunless -%}
+
           {%- when 'free_shipping_progress' -%}
             {%- unless product == blank or product.gift_card? -%}
               {%- render 'free-shipping-progress', product: product, block: block, product_form_id: product_form_id -%}

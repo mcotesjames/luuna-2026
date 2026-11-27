@@ -4,14 +4,21 @@
  * One striped bar: the cart (shippable items, less cart-level discounts) plus what the product form would add
  * right now (variant x plan x quantity).
  *
- * "reached" (success message, glint, shine) as soon as the cart plus the selection gets to the threshold,
+ * "reached" (success message, glint, truck pulse) as soon as the cart plus the selection gets to the threshold,
  * whether or not the selection is in the cart yet. One striped bar shows cart + selection, so adding to the cart
  * changes nothing visually: <purchase-options> starts at quantity 0 and resets to 0 after each add, so the
  * selection simply moves into the cart total.
  *
  * The preview amount comes from <purchase-options> (its lineTotal getter / purchase-options:change event) when the
  * product has that block, otherwise from the selected variant price x the form's quantity input.
+ *
+ * Without a `form` attribute (cart drawer) there is no preview: the bar is the cart alone. With `data-persist`, the
+ * element expects its section to re-render it on every cart change (the cart drawer does, via bundled sections), so
+ * it skips cart:change and instead animates from where the previous bar with the same key left off.
  */
+
+// Last rendered position per data-persist key, so a re-rendered bar can animate on from it
+const persisted = new Map();
 
 function formatMoney(cents) {
   const format = (window.themeVariables?.settings?.moneyFormat || '${{amount}}').replace(/<[^>]*>/g, '');
@@ -49,7 +56,16 @@ class FreeShippingProgress extends HTMLElement {
     this.message = this.querySelector('.fsp__message');
     this.track = this.querySelector('.fsp__track');
 
-    document.addEventListener('cart:change', (event) => this.#onCartChange(event), { signal });
+    this.persistKey = this.dataset.persist || null;
+
+    if (!this.persistKey) {
+      document.addEventListener('cart:change', (event) => this.#onCartChange(event), { signal });
+    }
+
+    if (!this.formId) {
+      this.#renderCartOnly();
+      return;
+    }
 
     document.addEventListener('purchase-options:change', (event) => {
       if (event.target.getAttribute('form') !== this.formId) return;
@@ -85,6 +101,22 @@ class FreeShippingProgress extends HTMLElement {
     this.abortController?.abort();
   }
 
+  // Cart drawer: no product preview. When re-rendered, start from the previous bar's position and state, then move to
+  // the new one on the next frame so the fill transitions and the unlock glint plays.
+  #renderCartOnly() {
+    const previous = this.persistKey && persisted.get(this.persistKey);
+    if (!previous) {
+      this.#render({ fromCart: true });
+      return;
+    }
+
+    this.rendered = true;
+    this.previewProgress = previous.progress;
+    this.dataset.state = previous.state;
+    this.style.setProperty('--fsp-preview-progress', previous.progress);
+    requestAnimationFrame(() => requestAnimationFrame(() => this.#render({ fromCart: true })));
+  }
+
   get #purchaseOptions() {
     const element = document.querySelector(`purchase-options[form="${CSS.escape(this.formId)}"]`);
     return typeof element?.lineTotal === 'number' ? element : null;
@@ -109,7 +141,7 @@ class FreeShippingProgress extends HTMLElement {
     this.removeAttribute('data-play');
     void this.offsetWidth; // restart the animation if it is already running
     this.dataset.play = name;
-    this.playTimeout = setTimeout(() => this.removeAttribute('data-play'), 1200); // glint is 0.9s
+    this.playTimeout = setTimeout(() => this.removeAttribute('data-play'), 1200); // glint 0.9s; unlock pulse ends at 1.05s
   }
 
   #onCartChange(event) {
@@ -145,7 +177,7 @@ class FreeShippingProgress extends HTMLElement {
     // Animations (styles in free-shipping-progress.css; all disabled by the block setting or prefers-reduced-motion)
     if (this.rendered) {
       if (state === 'reached' && this.dataset.state !== 'reached') {
-        this.#play('unlocked'); // the usual glint, then the module shine
+        this.#play('unlocked'); // the usual glint, plus the truck pulse
       } else if (!fromCart && previewProgress > this.previewProgress) {
         // slight single glint when changing the selection moves the bar forward; cart changes just fill smoothly,
         // so the glint never reads as success when the cart is still under the minimum
@@ -159,6 +191,8 @@ class FreeShippingProgress extends HTMLElement {
     this.style.setProperty('--fsp-preview-progress', previewProgress);
     this.track.setAttribute('aria-valuenow', String(Math.round(previewProgress * 100)));
     this.track.setAttribute('aria-valuetext', this.message.textContent.trim());
+
+    if (this.persistKey) persisted.set(this.persistKey, { progress: previewProgress, state });
   }
 }
 

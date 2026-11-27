@@ -49,6 +49,7 @@
         "purchase_options": {
           "type": "purchase_options",
           "settings": {
+            "container_heading": "Choose how to buy",
             "subscribe_title": "Subscribe & save",
             "badge_text": "Save [percent]%",
             "frequency_label": "Delivery frequency",
@@ -117,6 +118,17 @@
             "applied_text": "FREESHIPPING2026 applied. Free delivery will show at checkout"
           }
         },
+        "bundle_upsell": {
+          "type": "bundle_upsell",
+          "settings": {
+            "style": "outline",
+            "max_bundles": "1",
+            "heading": "Bundle & save",
+            "badge_text": "Save [saving]",
+            "saving_format": "percentage",
+            "cta_label": "View bundle"
+          }
+        },
         "complementary_products": {
           "type": "complementary_products",
           "settings": {
@@ -136,6 +148,7 @@
         "variant_picker",
         "purchase_options",
         "buy_buttons",
+        "bundle_upsell",
         "payment_terms",
         "description",
         "accordion_details",

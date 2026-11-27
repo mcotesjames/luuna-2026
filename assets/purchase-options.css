@@ -15,14 +15,31 @@
   color: var(--po-ink);
 }
 
+/* The heading groups the purchase options, apart from the bundle upsell and other blocks */
 .po__fieldset {
   display: grid;
   gap: 12px;
   margin: 0;
   padding: 0;
-  border: 0;
   min-width: 0;
+  border: 0;
 }
+
+/* A legend sits on the fieldset's border by default; float it so it lays out inside the panel like a heading */
+.po__legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 2px;
+  font-family: 'Adelia', serif;
+  font-size: 13px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 2.3px;
+  color: var(--po-ink);
+}
+
+.po__legend + * { clear: both; }
 
 /* ---------- Card ---------- */
 
@@ -95,6 +112,9 @@
   align-items: baseline;
   gap: 2px 8px;
 }
+
+/* Price only on the selected card, to save space; the closed card keeps its title and saving badge */
+.po-card:not(.is-open):not([data-po-solo]) .po-price { display: none; }
 
 .po-price__current { font-size: 14px; font-weight: 700; }
 .po-price__compare { font-size: 13px; color: var(--po-muted); }

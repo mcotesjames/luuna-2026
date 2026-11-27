@@ -93,6 +93,51 @@
         font-family: 'Adelia', serif;
       }
 
+      /* Bundle upsell block renders nothing for products without a bundle: drop its empty wrapper so it leaves no gap */
+      .product-info__block-item[data-block-type="bundle-upsell"]:empty {
+        display: none;
+      }
+
+      /* Add to cart right under the purchase options: use the same 12px gap as between the purchase option cards
+         (assets/purchase-options.css) instead of the theme's 2rem, so the cards and the button read as one group.
+         Both sides are set, as the theme gives each block a top and bottom margin (they collapse to the larger). */
+      .product-info__block-item[data-block-type="purchase-options"]:has(+ .product-info__block-item[data-block-type="buy-buttons"]) {
+        margin-block-end: 12px;
+      }
+
+      .product-info__block-item[data-block-type="purchase-options"] + .product-info__block-item[data-block-type="buy-buttons"] {
+        margin-block-start: 12px;
+      }
+
+      /* PDP add to cart (main and sticky bar): brand display font and a larger button, matching the cart drawer's
+         checkout button (sections/cart-drawer.liquid). Slightly tighter tracking than the drawer, as the label carries
+         the price and plan ("Add to cart · HK$720.00 every 2 months"); long labels wrap onto balanced lines. */
+      .buy-buttons > .button[type="submit"] {
+        min-height: 3.5rem;
+        padding-block: 1rem;
+        column-gap: 0.625rem;
+        font-family: 'Adelia', serif;
+        font-size: var(--text-base, 1rem);
+        font-weight: 700;
+        line-height: 1.25;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        text-wrap: balance;
+      }
+
+      /* Shopping bag icon before the label, while the button is active. Drawn in CSS because purchase-options.js
+         rewrites the button's text on every change. Same bag as the header cart icon (shopping_bag). */
+      .buy-buttons > .button[type="submit"]:not([disabled])::before {
+        content: "";
+        flex-shrink: 0;
+        width: 1.125rem;
+        height: 1.125rem;
+        margin-block-start: -0.125rem;
+        background-color: currentColor;
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M4.75 8.25A.75.75 0 0 0 4 9L3 19.125c0 1.418 1.207 2.625 2.625 2.625h12.75c1.418 0 2.625-1.149 2.625-2.566L20 9a.75.75 0 0 0-.75-.75H4.75Zm2.75 0v-1.5a4.5 4.5 0 0 1 4.5-4.5v0a4.5 4.5 0 0 1 4.5 4.5v1.5' stroke='black' stroke-width='{{ settings.icon_stroke_width | default: 1.5 }}' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'%3E%3Cpath d='M4.75 8.25A.75.75 0 0 0 4 9L3 19.125c0 1.418 1.207 2.625 2.625 2.625h12.75c1.418 0 2.625-1.149 2.625-2.566L20 9a.75.75 0 0 0-.75-.75H4.75Zm2.75 0v-1.5a4.5 4.5 0 0 1 4.5-4.5v0a4.5 4.5 0 0 1 4.5 4.5v1.5' stroke='black' stroke-width='{{ settings.icon_stroke_width | default: 1.5 }}' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+      }
+
       {%- if settings.always_show_quick_buy -%}
         /* Product cards: keep the quick buy / add to cart button visible on desktop instead of revealing it on hover */
         @media screen and (pointer: fine) {

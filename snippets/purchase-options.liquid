@@ -68,10 +68,14 @@
   </script>
 
   <fieldset class="po__fieldset">
-    <legend class="sr-only">Purchase options</legend>
+    {%- if bs.container_heading != blank -%}
+      <legend class="po__legend">{{ bs.container_heading | escape }}</legend>
+    {%- else -%}
+      <legend class="sr-only">Purchase options</legend>
+    {%- endif -%}
 
     {%- if has_subscription -%}
-      <div class="po-card" data-po-card="subscription" {% if variant.selling_plan_allocations.size == 0 %}hidden{% endif %}>
+      <div class="po-card{% if default_type == 'subscription' %} is-open{% endif %}" data-po-card="subscription" {% if variant.selling_plan_allocations.size == 0 %}hidden{% endif %}>
         <label class="po-card__header">
           <span class="po-card__main">
             <span class="po-card__heading">
@@ -127,7 +131,7 @@
     {%- endif -%}
 
     {%- if show_onetime -%}
-      <div class="po-card" data-po-card="onetime" {% unless has_subscription %}data-po-solo{% endunless %}>
+      <div class="po-card{% if default_type == 'onetime' %} is-open{% endif %}" data-po-card="onetime" {% unless has_subscription %}data-po-solo{% endunless %}>
         <label class="po-card__header">
           <span class="po-card__main">
             <span class="po-card__heading">

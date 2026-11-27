@@ -2,7 +2,7 @@
  * Presets (data-style) use the LUUNA palette; the block's colour pickers override them via the --fsp-* variables. */
 
 .fsp {
-  --fsp-fill: #231915;
+  --fsp-fill: #4c2d00;
   --fsp-track: #e6e1d0;
   --fsp-text: #1c1c1c;
   --fsp-bg: transparent;
@@ -22,9 +22,10 @@
 
 .fsp[hidden] { display: none; }
 
-/* Minimal: espresso bar on sand, no container */
+/* Minimal: solid brown bar on sand, no container */
 .fsp[data-style="minimal"] {
-  --fsp-height: 4px;
+  --fsp-height: 6px;
+  --fsp-padding: 2px 0 4px;
 }
 
 /* Card: cream panel matching the open purchase option card */
@@ -65,6 +66,56 @@
   font-weight: 700;
 }
 
+/* ---------- Truck ----------
+ * Overlaid on the bar, centred on it and facing forward (the icon faces left, so it is mirrored), with its front at the
+ * end of the fill: it drives along with the progress (--fsp-preview-progress, set by JS), from the start of the bar to
+ * the end, and pulses there when free shipping is unlocked. A patch of the background behind it stops the bar showing
+ * through the outline icon. */
+
+.fsp__road {
+  position: relative;
+}
+
+.fsp__road--truck {
+  --fsp-truck-width: 22px; /* the icon itself: the patch hugs it, so the bar runs right up to the truck */
+  /* The truck stands ~8px proud of the bar below it */
+  margin-block-end: 4px;
+}
+
+.fsp__truck {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: clamp(
+    0px,
+    calc(var(--fsp-preview-progress, 0) * 100% - var(--fsp-truck-width)),
+    calc(100% - var(--fsp-truck-width))
+  );
+  /* Same timing as the fill (.fsp__preview) */
+  transition: inset-inline-start 0.45s ease-in-out;
+  display: flex;
+  justify-content: center;
+  width: var(--fsp-truck-width);
+  border-radius: 2px;
+  background: var(--fsp-truck-bg);
+  transform: translateY(-50%);
+  pointer-events: none;
+  /* In front of the bar (the track is positioned too, and comes later in the markup) */
+  z-index: 1;
+}
+
+/* Patch colour: LUUNA's page cream (colour scheme 1's background). The theme's --background can't be used here, as
+   the product section has no scheme of its own and inherits a transparent one. The card styles, and a "Card
+   background" colour set on the block, use the card colour (--fsp-bg). */
+.fsp { --fsp-truck-bg: #fffeef; }
+.fsp:is([data-style="card"], [data-style="bold"]) { --fsp-truck-bg: var(--fsp-bg); }
+
+.fsp__truck .fsp__icon {
+  display: block;
+  transform: scaleX(-1);
+}
+
+[dir="rtl"] .fsp__truck .fsp__icon { transform: none; }
+
 .fsp__track {
   position: relative;
   height: var(--fsp-height);
@@ -77,7 +128,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  /* Revealed with clip-path rather than scaled, so the stripes and glint keep their size as the bar grows */
+  /* Revealed with clip-path rather than scaled, so the glint keeps its size as the bar grows */
   clip-path: inset(0 calc((1 - var(--fsp-progress, 0)) * 100%) 0 0 round 999px);
   transition: clip-path 0.45s ease-in-out;
 }
@@ -86,45 +137,25 @@
   clip-path: inset(0 0 0 calc((1 - var(--fsp-progress, 0)) * 100%) round 999px);
 }
 
-/* The bar: cart plus the product selected on this page, one stripe style whether or not it's in the cart yet */
+/* The bar: cart plus the product selected on this page, one solid fill whether or not it's in the cart yet */
 .fsp__preview {
-  background: repeating-linear-gradient(
-    -45deg,
-    color-mix(in srgb, var(--fsp-fill) 45%, transparent) 0 4px,
-    color-mix(in srgb, var(--fsp-fill) 30%, transparent) 4px 8px
-  );
+  background: var(--fsp-fill);
   --fsp-progress: var(--fsp-preview-progress, 0);
 }
 
 /* ---------- Animation ----------
- * Bar glint = something changed. Module shine = free shipping unlocked.
  * - progressed: one quick glint along the bar when it moves forward (data-play, set by JS)
- * - unlocked:   the same bar glint as any other step (data-play="unlocked")
- * - reached:    a foil-like shine sweeps across the whole module, rests, repeats. Reached means the
- *               cart plus the current selection hits the minimum, whether or not it is in the cart yet.
+ * - unlocked:   the glint, and the truck pulses once it reaches the end (data-play="unlocked")
  * Everything is off for prefers-reduced-motion and when the block's Animate setting is off.
  */
 
 .fsp {
   --fsp-glint: rgb(255 255 255 / 0.45);
-  --fsp-shine: rgb(255 255 255 / 0.22);
-  --fsp-cycle: 3.6s;
   position: relative;
-  overflow: hidden;
-  isolation: isolate;
 }
 
-.fsp[data-style="bold"] {
-  /* Cream bar on espresso: near-white glint; warm cream shine across the card */
-  --fsp-glint: rgb(255 255 255 / 0.95);
-  --fsp-shine: rgb(255 240 205 / 0.36);
-}
-
-.fsp[data-style="card"] { --fsp-shine: rgb(255 255 255 / 0.7); }
-.fsp[data-style="minimal"] { --fsp-shine: rgb(255 255 255 / 0.9); }
-
-.fsp[data-animation="subtle"] { --fsp-cycle: 5s; }
-.fsp[data-animation="bold"] { --fsp-cycle: 3.6s; }
+/* Cream bar on espresso: near-white glint */
+.fsp[data-style="bold"] { --fsp-glint: rgb(255 255 255 / 0.95); }
 
 .fsp__preview {
   overflow: hidden;
@@ -146,31 +177,18 @@
   to   { transform: translateX(325%); opacity: 1; }
 }
 
-/* Module shine: a soft diagonal band of light over the whole card */
-.fsp::after {
-  content: "";
-  position: absolute;
-  inset: -20% auto -20% 0;
-  width: 45%;
-  z-index: 1;
-  /* Horizontal gradient (so both edges fade fully), slanted with skew */
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--fsp-shine) 50%, transparent) 33%,
-    var(--fsp-shine) 50%,
-    color-mix(in srgb, var(--fsp-shine) 50%, transparent) 67%,
-    transparent 100%
-  );
-  transform: translateX(-105%) skewX(-20deg);
-  opacity: 0;
-  pointer-events: none;
+/* Unlocked: the truck swells and settles, once */
+@keyframes fsp-truck-pulse {
+  0%   { scale: 1; }
+  35%  { scale: 1.3; }
+  65%  { scale: 0.95; }
+  100% { scale: 1; }
 }
 
-@keyframes fsp-shine {
-  0%        { transform: translateX(-105%) skewX(-20deg); opacity: 1; }
-  30%       { transform: translateX(240%) skewX(-20deg); opacity: 1; }
-  31%, 100% { transform: translateX(240%) skewX(-20deg); opacity: 0; }
+/* Bumps along the road while it drives */
+@keyframes fsp-truck-bump {
+  0%, 100% { translate: 0 0; }
+  50%      { translate: 0 -1.5px; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -179,15 +197,45 @@
     animation: fsp-glint-once 0.9s ease-out;
   }
 
-  /* Free shipping unlocked: shine */
-  .fsp:not([data-animation="none"])[data-state="reached"]::after {
-    /* First sweep follows the bar glint (0.9s) */
-    animation: fsp-shine var(--fsp-cycle) cubic-bezier(0.25, 0, 0.2, 1) 0.9s infinite;
+  /* Bar moved forward: the truck bumps along as it follows the fill */
+  .fsp:not([data-animation="none"])[data-play="progressed"] .fsp__truck .fsp__icon {
+    animation: fsp-truck-bump 0.15s ease-in-out 3;
+  }
+
+  /* Free shipping unlocked: the truck bumps along to the end with the fill (0.45s), then pulses */
+  .fsp:not([data-animation="none"])[data-play="unlocked"] .fsp__truck {
+    animation: fsp-truck-pulse 0.6s cubic-bezier(0.3, 0, 0.3, 1) 0.45s;
+  }
+
+  .fsp:not([data-animation="none"])[data-play="unlocked"] .fsp__truck .fsp__icon {
+    animation: fsp-truck-bump 0.15s ease-in-out 3;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fsp[data-state] .fsp__preview {
+  .fsp[data-state] .fsp__preview,
+  .fsp__truck {
     transition: none;
   }
+}
+
+/* ---------- Cart drawer ----------
+ * Sits at the top of the drawer body, above the line items (which bring their own top padding). The section wraps it in
+ * a plain div so the drawer's scrolling grid sizes the row to the bar. */
+
+.cart-drawer__free-shipping {
+  margin-block-start: var(--drawer-body-padding-block, 1.25rem);
+}
+
+/* Minimal has no panel: keep the old bar's full-width divider so it still reads as its own strip */
+.cart-drawer__free-shipping[data-style="minimal"] {
+  margin-inline: calc(-1 * var(--drawer-body-padding-inline, 1.25rem));
+  padding: 0 var(--drawer-body-padding-inline, 1.25rem) var(--drawer-body-padding-block, 1.25rem);
+  border-radius: 0;
+  border-width: 0 0 1px;
+  border-color: rgb(var(--border-color));
+}
+
+.cart-drawer__free-shipping-wrapper:has([data-style="minimal"]) + .cart-drawer__items {
+  padding-block-start: var(--drawer-body-padding-block, 1.25rem);
 }
