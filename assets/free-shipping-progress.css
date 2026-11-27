@@ -146,6 +146,7 @@
 /* ---------- Animation ----------
  * - progressed: one quick glint along the bar when it moves forward (data-play, set by JS)
  * - unlocked:   the glint, and the truck pulses once it reaches the end (data-play="unlocked")
+ * - reached:    the glint keeps sweeping the full bar, rests, repeats
  * Everything is off for prefers-reduced-motion and when the block's Animate setting is off.
  */
 
@@ -177,6 +178,13 @@
   to   { transform: translateX(325%); opacity: 1; }
 }
 
+/* Reached: the same glint sweeps the full bar, rests, repeats */
+@keyframes fsp-glint-loop {
+  0%        { transform: translateX(0); opacity: 1; }
+  30%       { transform: translateX(325%); opacity: 1; }
+  31%, 100% { transform: translateX(325%); opacity: 0; }
+}
+
 /* Unlocked: the truck swells and settles, once */
 @keyframes fsp-truck-pulse {
   0%   { scale: 1; }
@@ -192,6 +200,12 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Free shipping reached: the glint keeps sweeping the full bar (every 3.6s, first sweep after the unlock glint).
+     Declared before the one-off glint below, which takes over while data-play is set */
+  .fsp:not([data-animation="none"])[data-state="reached"] .fsp__preview::after {
+    animation: fsp-glint-loop 3.6s cubic-bezier(0.25, 0, 0.2, 1) 0.9s infinite;
+  }
+
   /* Bar moved forward */
   .fsp:not([data-animation="none"]):is([data-play="progressed"], [data-play="unlocked"]) .fsp__preview::after {
     animation: fsp-glint-once 0.9s ease-out;
